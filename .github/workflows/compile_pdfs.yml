@@ -11,15 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Compile LaTeX Documents
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: templates/*.tex
+          root_file: |
+            templates/sap_clearance_letter.tex
+            templates/bank_confirmation_letter.tex
+            templates/ledger_reconciliation_certificate.tex
 
       - name: Upload Compiled PDFs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: PDF-Certificates
           path: "*.pdf"
