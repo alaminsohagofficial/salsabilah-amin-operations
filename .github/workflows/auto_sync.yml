@@ -1,51 +1,51 @@
-name: Auto Synchronize and Build PDF
+name: Auto Sync & PDF Compile Engine
 
 on:
   push:
     branches: [ "main", "master" ]
-  workflow_dispatch: # মেনুয়ালি এক ক্লিকে রান করার জন্য
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-compile:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install Python Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
 
-    - name: Run Auto Sync Engine
-      env:
-        ERP_API_URL: ${{ secrets.ERP_API_URL }}
-        ERP_API_TOKEN: ${{ secrets.ERP_API_TOKEN }}
-      run: |
-        python scripts/sync_engine.py
+      - name: Run API Sync Engine
+        env:
+          ERP_API_URL: ${{ secrets.ERP_API_URL }}
+          ERP_API_TOKEN: ${{ secrets.ERP_API_TOKEN }}
+        run: |
+          python scripts/sync_engine.py
 
-    - name: Install LaTeX Environment
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended
+      - name: Install LaTeX Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended
 
-    - name: Compile LaTeX Documents to PDF
-      run: |
-        mkdir -p output_pdfs
-        for file in templates/*.tex; do
-          if [ -f "$file" ]; then
-            pdflatex -output-directory=output_pdfs "$file"
-          fi
-        done
+      - name: Compile LaTeX Templates to PDF
+        run: |
+          mkdir -p output_pdfs
+          for file in templates/*.tex; do
+            if [ -f "$file" ]; then
+              pdflatex -interaction=nonstopmode -output-directory=output_pdfs "$file"
+            fi
+          done
 
-    - name: Upload Generated PDFs
-      uses: actions/upload-artifact@v3
-      with:
-        name: Compiled-Banking-Clearance-PDFs
-        path: output_pdfs/*.pdf
+      - name: Upload Generated PDFs
+        uses: actions/upload-artifact@v3
+        with:
+          name: Generated-Banking-And-ERP-PDFs
+          path: output_pdfs/*.pdf
