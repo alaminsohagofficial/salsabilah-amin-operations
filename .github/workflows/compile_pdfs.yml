@@ -1,0 +1,28 @@
+name: Compile LaTeX PDFs
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'templates/*.tex'
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Compile LaTeX Documents
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: |
+            templates/sap_clearance_letter.tex
+            templates/bank_confirmation_letter.tex
+            templates/ledger_reconciliation_certificate.tex
+
+      - name: Upload Compiled PDFs
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF-Certificates
+          path: "*.pdf"
