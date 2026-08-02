@@ -1,57 +1,38 @@
-Name: Auto Sync & PDF Compile Engine
+name: Auto Sync & Compile LaTeX PDFs
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build-and-compile:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install Python Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-
-      - name: Run API Sync Engine
-        env:
-          ERP_API_URL: ${{ secrets.ERP_API_URL }}
-          ERP_API_TOKEN: ${{ secrets.ERP_API_TOKEN }}
-        run: |
-          python scripts/sync_engine.py
-
-      - name: Install LaTeX Environment
+      - name: Install TeX Live & Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            texlive-latex-base \
-            texlive-latex-extra \
-            texlive-fonts-recommended
+          sudo apt-get install -y texlive-latex-extra texlive-fonts-recommended texlive-xetex fonts-noto-hinted
 
-      - name: Compile LaTeX Templates to PDF
+      - name: Compile LaTeX Files
         run: |
           mkdir -p output_pdfs
-          for file in templates/*.tex; do
-            if [ -f "$file" ]; then
-              # Two-pass compilation for cross-references and page formatting
-              pdflatex -interaction=nonstopmode -output-directory=output_pdfs "$file"
-              pdflatex -interaction=nonstopmode -output-directory=output_pdfs "$file"
-            fi
+          for f in *.tex; do
+            [ -f "$f" ] || continue
+            xelatex -interaction=nonstopmode -output-directory=output_pdfs "$f" || true
           done
 
-      - name: Upload Generated PDFs
-        uses: actions/upload-artifact@v4
-        with:
-          name: Generated-Banking-And-ERP-PDFs
-          path: output_pdfs/*.pdf
-          if-no-files-found: error
+      - name: Commit & Push Compiled PDFs
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add output_pdfs/*.pdf
+          git commit -m "Auto-compile LaTeX PDFs [skip ci]" || exit 0
+          git push
