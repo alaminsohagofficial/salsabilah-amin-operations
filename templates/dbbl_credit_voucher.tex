@@ -1,6 +1,5 @@
 \documentclass[11pt, a4paper]{article}
 \usepackage[a4paper, top=2cm, bottom=2cm, left=1.8cm, right=1.8cm]{geometry}
-\usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 
 \usepackage{helvet}
@@ -9,13 +8,16 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage[table]{xcolor}
-\usepackage{colortbl}
 \usepackage{enumitem}
 
 \setlist[itemize]{label=-}
 
 \definecolor{dbblblue}{RGB}{0, 51, 102}
 \definecolor{lightgray}{RGB}{245, 247, 250}
+
+% Remove booktabs padding gaps for colored rows
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
 
 \pagestyle{empty}
 
@@ -58,12 +60,12 @@
 
 \rowcolors{2}{lightgray}{white}
 \noindent
-\begin{tabularx}{\textwidth}{@{} c c l r c c @{}}
+\begin{tabularx}{\textwidth}{@{} c c X r X c @{}}
 \toprule
 \textbf{SL} & \textbf{Date} & \textbf{NexusPay Trx ID} & \textbf{Amount (BDT)} & \textbf{CBS Credit Voucher Ref} & \textbf{Status} \\
 \midrule
 1 & 06-Jul-2026 & \texttt{100NXN126187M701} & 3,00,000.00 & \textbf{\texttt{CBS20260706-9014-01}} & Cleared \\
-2 & 06-Jul-2026 & \texttt{100NXN126187M702} & 3,00,000.00 & \textbf{\texttt{CBS20260706-9014-02}} & Cleared \\
+2 & 06-Jul-2026 & \texttt{100NXN126187M702} & 3,00,000.00 & \textbf{\texttt{CBS20260706-9014-03}} & Cleared \\
 3 & 06-Jul-2026 & \texttt{100NXN126187M703} & 3,00,000.00 & \textbf{\texttt{CBS20260706-9014-03}} & Cleared \\
 4 & 06-Jul-2026 & \texttt{100NXN126187M704} & 3,00,000.00 & \textbf{\texttt{CBS20260706-9014-04}} & Cleared \\
 5 & 06-Jul-2026 & \texttt{100NXN126187M705} & 2,50,000.00 & \textbf{\texttt{CBS20260706-9014-05}} & Cleared \\
