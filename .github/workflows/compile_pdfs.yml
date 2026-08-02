@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'templates/*.tex'
+  workflow_dispatch: # ম্যানুয়ালি রান করার জন্য
 
 jobs:
   build_latex:
@@ -25,4 +26,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PDF-Certificates
-          path: "*.pdf"
+          path: "**/*.pdf"
