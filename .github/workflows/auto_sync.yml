@@ -1,4 +1,4 @@
-name: Auto Sync & PDF Compile Engine
+Name: Auto Sync & PDF Compile Engine
 
 on:
   push:
@@ -33,13 +33,18 @@ jobs:
       - name: Install LaTeX Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-fonts-recommended
 
       - name: Compile LaTeX Templates to PDF
         run: |
           mkdir -p output_pdfs
           for file in templates/*.tex; do
             if [ -f "$file" ]; then
+              # Two-pass compilation for cross-references and page formatting
+              pdflatex -interaction=nonstopmode -output-directory=output_pdfs "$file"
               pdflatex -interaction=nonstopmode -output-directory=output_pdfs "$file"
             fi
           done
@@ -49,3 +54,4 @@ jobs:
         with:
           name: Generated-Banking-And-ERP-PDFs
           path: output_pdfs/*.pdf
+          if-no-files-found: error
