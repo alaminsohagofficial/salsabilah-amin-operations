@@ -16,10 +16,7 @@ jobs:
       - name: Compile LaTeX Documents
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: |
-            templates/sap_clearance_letter.tex
-            templates/bank_confirmation_letter.tex
-            templates/ledger_reconciliation_certificate.tex
+          root_file: templates/*.tex
 
       - name: Upload Compiled PDFs
         uses: actions/upload-artifact@v3
