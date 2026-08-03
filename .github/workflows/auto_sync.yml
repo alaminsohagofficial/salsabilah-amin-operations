@@ -3,6 +3,9 @@ name: Auto Sync & Compile LaTeX PDFs
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'templates/*.tex'
+      - '*.tex'
   workflow_dispatch:
 
 permissions:
@@ -24,7 +27,7 @@ jobs:
       - name: Compile LaTeX Files
         run: |
           mkdir -p output_pdfs
-          for f in *.tex; do
+          for f in templates/*.tex *.tex; do
             [ -f "$f" ] || continue
             xelatex -interaction=nonstopmode -output-directory=output_pdfs "$f" || true
           done
