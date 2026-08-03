@@ -1,4 +1,4 @@
-name: Compile LaTeX PDFs
+Name: Compile LaTeX PDFs
 
 on:
   push:
@@ -14,22 +14,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Install Bangla Fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-ui-core fonts-noto-extra
+
       - name: Compile LaTeX Documents
-        uses: xu-cheng/latex-action@v2
+        uses: xu-cheng/latex-action@v3
         continue-on-error: true
         with:
-          root_file: |
-            templates/sap_clearance_letter.tex
-            templates/bank_confirmation_letter.tex
-            templates/ledger_reconciliation_certificate.tex
-            templates/dbbl_credit_voucher.tex
-            templates/memorandum_clearance.tex
-            templates/tax_settlement_receipt.tex
+          root_file: "templates/*.tex"
           compiler: xelatex
-          args: "-interaction=nonstopmode"
+          args: "-interaction=nonstopmode -halt-on-error"
 
       - name: Upload Compiled PDFs
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: Operational-PDF-Certificates
           path: "templates/*.pdf"
