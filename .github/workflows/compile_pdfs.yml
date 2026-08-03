@@ -23,6 +23,7 @@ jobs:
             templates/ledger_reconciliation_certificate.tex
             templates/dbbl_credit_voucher.tex
             templates/memorandum_clearance.tex
+            templates/tax_settlement_receipt.tex
 
       - name: Upload Compiled PDFs
         uses: actions/upload-artifact@v4
