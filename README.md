@@ -1,11 +1,34 @@
-## Repository Overview & Business Scope
+# Salsabila Amin Operations & Treasury Management
 
-**Entity:** S.R. Electronics Park  
-**Proprietor:** MD. AL AMIN SOHAG  
-**Role:** Authorized Dealer for Butterfly Marketing Limited  
+Official operations, automated document processing, and SAP FI/AR reconciliation workflow repository for **S.R. Electronics Park** (Authorized Dealer for Butterfly Marketing Limited).
 
-### Core Utility & Focus Areas
+---
 
-* **Financial Auditing & Reconciliation:** Serves as a comprehensive repository for tracking and verifying high-value financial transactions. Contains certified ledgers, SAP FI journal vouchers, and formal audit notices (e.g., Ref: `SR-BML-2026-RTGS-RECON-FINAL`) confirming multi-million BDT settlements via RTGS, EFT, and Agent Banking channels into Butterfly's corporate accounts.
-* **Procurement Lifecycle Management:** Documents end-to-end procurement workflows, including the evolution of Purchase Order `#000010189` (initial ৳14.3M order tracking, technical error cancellations, and final reconciled procurement memos for ECO+ and Butterfly refrigerator units).
-* **Operational Compliance & System Alignment:** Stores official correspondence, branch-level fund clearance directives, and divisional issue logs to ensure full business continuity and seamless integration with Butterfly Marketing’s ERP/SAP infrastructure.
+## 🏢 Business Entity & Governance
+
+* **Entity Name:** S.R. Electronics Park
+* **Proprietor:** MD. AL AMIN SOHAG
+* **Parent Principal:** Butterfly Marketing Limited / Minister Myone Group
+* **Dealer Code:** `3000002272`
+* **Primary Scope:** High-value procurement settlement, RTGS/EFT fund reconciliation, and SAP S/4HANA financial posting.
+
+---
+
+## 🛠 Active Workflows & Core Infrastructure
+
+1. **Financial Auditing & Reconciliation (`sap.html`):**
+   * Real-time tracking of dealer deposits, Journal Vouchers (JV), and bank clearances.
+   * Certified audit tracking ref: `SR-BML-2026-RTGS-RECON-FINAL`.
+   * Live deposit clearing management (e.g., DBBL Hatboaliya Branch BDT 3,00,000/- deposit clearance).
+
+2. **Procurement Lifecycle Management:**
+   * Purchase Order `#e000010109` tracking for **৳1.43 Crore (৳14.3M)** ECO+ and Butterfly Refrigerator units.
+   * Automated document compilation via GitHub Actions (`.github/workflows/compile_pdfs.yml`).
+
+3. **Notification Engine (`scripts/send_email.py`):**
+   * Instant email dispatch to treasury audit officers upon successful ledger posting.
+
+---
+
+## 📁 Repository Structure
+
