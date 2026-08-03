@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP ERP পেমেন্ট ও ডিলার ক্লিয়ারেন্স পোর্টাল v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+    <!-- নেভিগেশন বার -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-500 text-slate-900 p-2 rounded-lg font-bold text-lg">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide">SAP ERP ক্লিয়ারেন্স ও ম্যানেজমেন্ট সিস্টেম</h1>
+                    <p class="text-xs text-slate-400">সংস্করণ v2.0 | Minister & Butterfly Enterprise Gateway</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="refreshData()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-right"></i> রিফ্রেশ ডাটা
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- লাইভ মেট্রিক্স কার্ডসমূহ -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">মোট পেন্ডিং পেমেন্ট</p>
+                    <p class="text-2xl font-bold text-amber-600 font-mono" id="metricPending">৳ ৩,০০,০০০.০০</p>
+                </div>
+                <div class="bg-amber-100 text-amber-700 p-3 rounded-lg"><i class="fa-solid fa-hourglass-start text-xl"></i></div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">আজকের ক্লিয়ারকৃত মোট অর্থ</p>
+                    <p class="text-2xl font-bold text-emerald-600 font-mono" id="metricCleared">৳ ১,৩৫,৬৯,৫৪৫.০০</p>
+                </div>
+                <div class="bg-emerald-100 text-emerald-700 p-3 rounded-lg"><i class="fa-solid fa-circle-check text-xl"></i></div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">ইনভেন্টরি রিলিজ (ইউনিট)</p>
+                    <p class="text-2xl font-bold text-blue-600 font-mono">৪৫০ ইউনিট</p>
+                </div>
+                <div class="bg-blue-100 text-blue-700 p-3 rounded-lg"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">ERP কানেক্টিভিটি</p>
+                    <p class="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-1"><i class="fa-solid fa-signal"></i> SAP S/4HANA অনলাইল</p>
+                </div>
+                <div class="bg-slate-100 text-slate-700 p-3 rounded-lg"><i class="fa-solid fa-server text-xl"></i></div>
+            </div>
+        </div>
+
+        <!-- সার্চ ও ফিল্টার বার -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-3 justify-between items-center">
+            <div class="relative w-full md:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ডিলার কোড (যেমন: 3000002272) বা নাম দিয়ে খুঁজুন..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-slate-800">
+            </div>
+            <div class="flex gap-2 w-full md:w-auto">
+                <button onclick="approveAllPending()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-check-double"></i> সব পেন্ডিং অনুমোদন করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- প্রধান ডিলার পেমেন্ট লিস্ট -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-slate-500"></i> লাইভ পেমেন্ট ও SAP পোস্ট রিকোয়েস্ট
+                </h3>
+                <span class="text-xs text-slate-500">আপডেট করা হয়েছে: এখনই</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse" id="paymentTable">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider">
+                            <th class="py-3 px-4">ডিলার ও আইডি</th>
+                            <th class="py-3 px-4">কোম্পানি / ভেন্ডর</th>
+                            <th class="py-3 px-4">ব্যাংক ও ব্রাঞ্চ</th>
+                            <th class="py-3 px-4 text-right">পরিমাণ (BDT)</th>
+                            <th class="py-3 px-4 text-center">SAP Doc No</th>
+                            <th class="py-3 px-4 text-center">স্ট্যাটাস</th>
+                            <th class="py-3 px-4 text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <!-- SR Electronics Park -->
+                        <tr class="hover:bg-slate-50 transition" id="row-3000002272">
+                            <td class="py-3.5 px-4">
+                                <div class="font-bold text-slate-800">SR Electronics Park</div>
+                                <div class="text-[11px] font-mono text-emerald-700 font-bold">ID: 3000002272</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="font-semibold text-slate-700">Butterfly Marketing Ltd</div>
+                                <div class="text-[11px] text-slate-400">Agent Deposit</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="font-semibold text-slate-700">Dutch Bangla Bank PLC</div>
+                                <div class="text-[11px] text-slate-500">Hatboaliya Branch</div>
+                            </td>
+                            <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-sm">৳ ৩,০০,০০০.০০</td>
+                            <td class="py-3.5 px-4 text-center font-mono text-slate-500" id="doc-3000002272">5100030102</td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span id="status-3000002272" class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200">Pending</span>
+                            </td>
+                            <td class="py-3.5 px-4 text-center">
+                                <button onclick="approveSingle('3000002272')" id="btn-3000002272" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-3 py-1 rounded font-bold transition">
+                                    অনুমোদন
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Minister Hi-Tech Park -->
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-3.5 px-4">
+                                <div class="font-bold text-slate-800">Minister Hi-Tech Park</div>
+                                <div class="text-[11px] font-mono text-slate-500">ID: 002905</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="font-semibold text-slate-700">MHPIL</div>
+                                <div class="text-[11px] text-slate-400">Direct Cleared</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="font-semibold text-slate-700">Islami Bank Bangladesh Ltd</div>
+                                <div class="text-[11px] text-slate-500">Banani Branch (125260433)</div>
+                            </td>
+                            <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-sm">৳ ১,৩২,৬৯,৫৪৫.০০</td>
+                            <td class="py-3.5 px-4 text-center font-mono text-slate-600">5100029481</td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200">PAID & POSTED</span>
+                            </td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-lock"></i> সম্পন্ন</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- টোস্ট নোটিফিকেশন -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl text-xs flex items-center gap-3 opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMsg">সিস্টেম সফলভাবে আপডেট করা হয়েছে!</span>
+    </div>
+
+    <script>
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toUpperCase();
+            let trs = document.getElementById("paymentTable").getElementsByTagName("tr");
+            for (let i = 1; i < trs.length; i++) {
+                let text = trs[i].innerText.toUpperCase();
+                trs[i].style.display = text.indexOf(input) > -1 ? "" : "none";
+            }
+        }
+
+        function approveSingle(id) {
+            let status = document.getElementById('status-' + id);
+            let btn = document.getElementById('btn-' + id);
+            
+            status.className = "bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200";
+            status.innerText = "PAID & POSTED";
+            
+            btn.disabled = true;
+            btn.className = "bg-slate-200 text-slate-400 text-[11px] px-3 py-1 rounded font-bold cursor-not-allowed";
+            btn.innerText = "পোস্টেড";
+
+            showToast("ডিলার " + id + "-এর পেমেন্ট SAP এ সফলভাবে পোস্ট হয়েছে!");
+        }
+
+        function approveAllPending() {
+            approveSingle('3000002272');
+            showToast("সমস্ত পেন্ডিং পেমেন্ট অটো-অনুমোদিত হয়েছে!");
+        }
+
+        function refreshData() {
+            showToast("সিস্টেম ডাটা সিনক্রোনাইজ করা হয়েছে।");
+        }
+
+        function showToast(msg) {
+            let t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => t.classList.add('opacity-0', 'pointer-events-none'), 3000);
+        }
+    </script>
+</body>
+</html>
+```eof
+
+**যুক্ত করা নতুন সুবিধাসমূহ:**
+* **সার্চ ও লাইভ ফিল্টারিং:** ডিলার কোড বা ব্যাংকের নাম দিয়ে তাৎক্ষণিক তথ্য খুঁজে নেওয়ার ব্যবস্থা।
+* **লাইভ ফিন্যান্সিয়াল মেট্রিক্স:** পেন্ডিং, অটো-ক্লিয়ার করা টাকা ও রিলিজ হওয়া ইনভেন্টরির হিসাব দেখার প্যানেল।
+* **সংশোধিত ডিলার রেকর্ড:** SR Electronics Park (ডিলার আইডি: `3000002272`) এর আপডেট অন্তর্ভুক্ত করা হয়েছে।
