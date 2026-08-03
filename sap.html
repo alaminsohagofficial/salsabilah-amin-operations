@@ -1,213 +1,1254 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="bn" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAP ERP পেমেন্ট ও ডিলার ক্লিয়ারেন্স পোর্টাল v2.0</title>
+    <title>SAP ERP ফাইন্যান্সিয়াল ট্র্যাজারি কমান্ড সেন্টার v20.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+    <style> 
         body { font-family: 'Hind Siliguri', sans-serif; }
+        .modal-active { overflow: hidden; }
+        .table-compact td, .table-compact th { padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
+        @media print {
+            body * { visibility: hidden; }
+            #printableVoucher, #printableVoucher *, #printableExecReport, #printableExecReport * { visibility: visible; }
+            #printableVoucher, #printableExecReport { position: absolute; left: 0; top: 0; width: 100%; }
+        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200" onkeydown="handleGlobalShortcuts(event)">
 
-    <!-- নেভিগেশন বার -->
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40">
+    <!-- হেডার নেভিগেশন -->
+    <header class="bg-slate-900 text-white shadow-2xl sticky top-0 z-40 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-emerald-500 text-slate-900 p-2 rounded-lg font-bold text-lg">
-                    <i class="fa-solid fa-layer-group"></i>
+                <div class="bg-gradient-to-tr from-cyan-400 via-teal-400 to-indigo-500 text-slate-900 p-2.5 rounded-xl font-bold text-xl shadow-lg">
+                    <i class="fa-solid fa-crown text-slate-900 animate-bounce"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">SAP ERP ক্লিয়ারেন্স ও ম্যানেজমেন্ট সিস্টেম</h1>
-                    <p class="text-xs text-slate-400">সংস্করণ v2.0 | Minister & Butterfly Enterprise Gateway</p>
+                    <h1 class="text-lg font-bold tracking-wide flex items-center gap-2">
+                        SAP S/4HANA Sovereign Command Suite 
+                        <span class="bg-gradient-to-r from-amber-400 via-cyan-400 to-emerald-400 text-slate-950 border border-amber-300 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-black">v20.0 Sovereign</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Minister Hi-Tech Park | Butterfly Marketing | Myone Electronics</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="refreshData()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate-right"></i> রিফ্রেশ ডাটা
+            <div class="flex items-center space-x-2">
+                <!-- শর্টকাট গাইড -->
+                <span class="hidden lg:inline-block bg-slate-800 border border-slate-700 text-slate-400 text-[11px] px-2.5 py-1 rounded font-mono cursor-pointer" onclick="openShortcutModal()" title="কিবোর্ড শর্টকাট">
+                    <kbd class="text-amber-400 font-bold">Ctrl</kbd> + <kbd class="text-amber-400 font-bold">K</kbd>
+                </span>
+                <!-- লাইভ ফিড সিমুলেটর -->
+                <button onclick="toggleLiveFeedSim()" id="liveFeedBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
+                    <i class="fa-solid fa-tower-broadcast"></i> <span id="liveFeedStatus">Live Feed: OFF</span>
+                </button>
+                <!-- ভয়েস AI -->
+                <button onclick="toggleVoiceAssistant()" id="voiceBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-400 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1" title="ভয়েস কমান্ড">
+                    <i class="fa-solid fa-microphone"></i> <span id="voiceStatus">Voice AI</span>
+                </button>
+                <!-- অটোপাইলট -->
+                <button onclick="toggleAutoPilot()" id="autoPilotBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
+                    <i class="fa-solid fa-robot"></i> <span id="autoPilotStatus">Auto-Pilot</span>
+                </button>
+                <!-- কারেন্সি ট্রান্সফর্ম -->
+                <select id="currencySelect" onchange="changeCurrency()" class="bg-slate-800 border border-slate-700 text-emerald-400 text-xs rounded-lg px-2 py-1.5 focus:outline-none font-bold">
+                    <option value="BDT">BDT (৳)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                </select>
+                <!-- ইউজার রোল -->
+                <select id="userRole" onchange="changeRole()" class="bg-slate-800 border border-slate-700 text-amber-400 text-xs rounded-lg px-2 py-1.5 focus:outline-none font-semibold">
+                    <option value="MANAGER">Treasury Manager</option>
+                    <option value="AUDITOR">AR Auditor</option>
+                </select>
+                <!-- বোর্ড রিপোর্ট PDF -->
+                <button onclick="openExecReportModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-2.5 py-1.5 rounded-lg transition font-bold flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-file-pdf"></i> Board PDF
+                </button>
+                <!-- থিম টগল -->
+                <button onclick="toggleTheme()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs p-2 rounded-lg transition">
+                    <i class="fa-solid fa-moon text-sm" id="themeIcon"></i>
+                </button>
+                <button onclick="openAddModal()" class="bg-cyan-600 hover:bg-cyan-700 text-white text-xs px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-plus"></i> এন্ট্রি
+                </button>
+                <button onclick="toggleAuditDrawer()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs px-2.5 py-1.5 rounded-lg transition font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> অডিট
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-
-        <!-- লাইভ মেট্রিক্স কার্ডসমূহ -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase">মোট পেন্ডিং পেমেন্ট</p>
-                    <p class="text-2xl font-bold text-amber-600 font-mono" id="metricPending">৳ ৩,০০,০০০.০০</p>
-                </div>
-                <div class="bg-amber-100 text-amber-700 p-3 rounded-lg"><i class="fa-solid fa-hourglass-start text-xl"></i></div>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase">আজকের ক্লিয়ারকৃত মোট অর্থ</p>
-                    <p class="text-2xl font-bold text-emerald-600 font-mono" id="metricCleared">৳ ১,৩৫,৬৯,৫৪৫.০০</p>
-                </div>
-                <div class="bg-emerald-100 text-emerald-700 p-3 rounded-lg"><i class="fa-solid fa-circle-check text-xl"></i></div>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase">ইনভেন্টরি রিলিজ (ইউনিট)</p>
-                    <p class="text-2xl font-bold text-blue-600 font-mono">৪৫০ ইউনিট</p>
-                </div>
-                <div class="bg-blue-100 text-blue-700 p-3 rounded-lg"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase">ERP কানেক্টিভিটি</p>
-                    <p class="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-1"><i class="fa-solid fa-signal"></i> SAP S/4HANA অনলাইল</p>
-                </div>
-                <div class="bg-slate-100 text-slate-700 p-3 rounded-lg"><i class="fa-solid fa-server text-xl"></i></div>
-            </div>
+    <!-- FX ও লাইভ অডিট টিকার -->
+    <div class="bg-slate-950 text-slate-300 text-[11px] font-mono py-1.5 px-4 border-b border-slate-800 flex overflow-hidden whitespace-nowrap justify-between">
+        <div class="flex items-center gap-6 animate-pulse">
+            <span class="text-amber-400 font-bold flex items-center gap-1"><i class="fa-solid fa-globe"></i> FX LIVE:</span>
+            <span>USD/BDT: <strong class="text-emerald-400">120.50</strong> <i class="fa-solid fa-caret-up text-emerald-400"></i></span>
+            <span>EUR/BDT: <strong class="text-emerald-400">131.20</strong> <i class="fa-solid fa-caret-up text-emerald-400"></i></span>
+            <span class="text-slate-600">|</span>
+            <span class="text-cyan-400 font-bold"><i class="fa-solid fa-vault"></i> LIQUIDITY RESERVE:</span>
+            <span>Target: <strong class="text-emerald-400 font-sans">৳ ২৫.০০ কোটি</strong></span>
+            <span>Buffer: <strong class="text-emerald-400 font-sans">100% SECURE</strong></span>
         </div>
+        <div class="hidden md:flex items-center gap-3 text-slate-400">
+            <button onclick="openCalcModal()" class="hover:text-amber-400 transition flex items-center gap-1"><i class="fa-solid fa-calculator"></i> FX Calc</button>
+            <span>|</span>
+            <button onclick="exportToJSON()" class="hover:text-cyan-400 transition flex items-center gap-1"><i class="fa-solid fa-code"></i> JSON</button>
+            <span>|</span>
+            <button onclick="exportToCSV()" class="hover:text-emerald-400 transition flex items-center gap-1"><i class="fa-solid fa-file-csv"></i> CSV</button>
+        </div>
+    </div>
 
-        <!-- সার্চ ও ফিল্টার বার -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-3 justify-between items-center">
-            <div class="relative w-full md:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ডিলার কোড (যেমন: 3000002272) বা নাম দিয়ে খুঁজুন..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-slate-800">
-            </div>
-            <div class="flex gap-2 w-full md:w-auto">
-                <button onclick="approveAllPending()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-check-double"></i> সব পেন্ডিং অনুমোদন করুন
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 flex-grow w-full">
+
+        <!-- নেভিগেশন ট্যাব সমুহ -->
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+            <div class="flex items-center gap-2">
+                <button onclick="switchTab('mainRegister')" id="tabMain" class="bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-list-check"></i> ক্লিয়ারেন্স রেজিস্টার
+                </button>
+                <button onclick="switchTab('analyticsView')" id="tabAnalytics" class="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-line"></i> ট্রেজারি অ্যানালিটিক্স & ফোরকাস্ট
+                </button>
+                <button onclick="switchTab('securityView')" id="tabSecurity" class="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved"></i> সাইবার অডিট & সিকিউরিটি
                 </button>
             </div>
+            <button onclick="openAnomalyModal()" class="bg-rose-950 text-rose-300 border border-rose-800 text-xs px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1 hover:bg-rose-900">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Risk Detector
+            </button>
         </div>
 
-        <!-- প্রধান ডিলার পেমেন্ট লিস্ট -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-receipt text-slate-500"></i> লাইভ পেমেন্ট ও SAP পোস্ট রিকোয়েস্ট
-                </h3>
-                <span class="text-xs text-slate-500">আপডেট করা হয়েছে: এখনই</span>
+        <!-- লাইভ হেলথ স্কোর ও সিস্টেম মেট্রিক্স -->
+        <div class="bg-slate-900 text-white p-3.5 rounded-xl shadow-lg border border-slate-800 flex flex-wrap justify-between items-center text-xs gap-3">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 font-bold text-slate-200">
+                    <span class="flex h-3 w-3 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span>Sovereign Rating: <strong class="text-emerald-400 font-mono text-sm">100.0 / 100</strong></span>
+                </div>
+                <span class="text-slate-600 dark:text-slate-700">|</span>
+                <span class="text-slate-400"><i class="fa-solid fa-shield-check text-cyan-400"></i> AI Risk Score: <strong>0.00% (Absolute Zero)</strong></span>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse" id="paymentTable">
-                    <thead>
-                        <tr class="bg-slate-100 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider">
-                            <th class="py-3 px-4">ডিলার ও আইডি</th>
-                            <th class="py-3 px-4">কোম্পানি / ভেন্ডর</th>
-                            <th class="py-3 px-4">ব্যাংক ও ব্রাঞ্চ</th>
-                            <th class="py-3 px-4 text-right">পরিমাণ (BDT)</th>
-                            <th class="py-3 px-4 text-center">SAP Doc No</th>
-                            <th class="py-3 px-4 text-center">স্ট্যাটাস</th>
-                            <th class="py-3 px-4 text-center">অ্যাকশন</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200">
-                        <!-- SR Electronics Park -->
-                        <tr class="hover:bg-slate-50 transition" id="row-3000002272">
-                            <td class="py-3.5 px-4">
-                                <div class="font-bold text-slate-800">SR Electronics Park</div>
-                                <div class="text-[11px] font-mono text-emerald-700 font-bold">ID: 3000002272</div>
-                            </td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-semibold text-slate-700">Butterfly Marketing Ltd</div>
-                                <div class="text-[11px] text-slate-400">Agent Deposit</div>
-                            </td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-semibold text-slate-700">Dutch Bangla Bank PLC</div>
-                                <div class="text-[11px] text-slate-500">Hatboaliya Branch</div>
-                            </td>
-                            <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-sm">৳ ৩,০০,০০০.০০</td>
-                            <td class="py-3.5 px-4 text-center font-mono text-slate-500" id="doc-3000002272">5100030102</td>
-                            <td class="py-3.5 px-4 text-center">
-                                <span id="status-3000002272" class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200">Pending</span>
-                            </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <button onclick="approveSingle('3000002272')" id="btn-3000002272" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-3 py-1 rounded font-bold transition">
-                                    অনুমোদন
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Minister Hi-Tech Park -->
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="py-3.5 px-4">
-                                <div class="font-bold text-slate-800">Minister Hi-Tech Park</div>
-                                <div class="text-[11px] font-mono text-slate-500">ID: 002905</div>
-                            </td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-semibold text-slate-700">MHPIL</div>
-                                <div class="text-[11px] text-slate-400">Direct Cleared</div>
-                            </td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-semibold text-slate-700">Islami Bank Bangladesh Ltd</div>
-                                <div class="text-[11px] text-slate-500">Banani Branch (125260433)</div>
-                            </td>
-                            <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-sm">৳ ১,৩২,৬৯,৫৪৫.০০</td>
-                            <td class="py-3.5 px-4 text-center font-mono text-slate-600">5100029481</td>
-                            <td class="py-3.5 px-4 text-center">
-                                <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200">PAID & POSTED</span>
-                            </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-lock"></i> সম্পন্ন</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="flex items-center gap-4 font-mono">
+                <span class="text-slate-300"><i class="fa-solid fa-bolt text-amber-400"></i> SAP OData Latency: <strong class="text-emerald-400">4ms</strong></span>
+                <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">SOVEREIGN ACTIVE</span>
             </div>
         </div>
+
+        <!-- লাইভ মেট্রিক্স কার্ড -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1.5">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">পেন্ডিং ক্লিয়ারেন্স</p>
+                        <span class="text-[9px] bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold">Action Needed</span>
+                    </div>
+                    <p class="text-2xl font-bold text-amber-600 dark:text-amber-500 font-mono" id="metricPending">৳ ৮,৫০,০০০.০০</p>
+                    <p class="text-[10px] text-amber-700 dark:text-amber-400 font-medium" id="pendingCountText">২টি পেমেন্ট অনুমোদনের অপেক্ষায়</p>
+                </div>
+                <div class="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 p-3.5 rounded-2xl"><i class="fa-solid fa-hourglass-half text-xl"></i></div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1.5">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">আজকের মোট ক্লিয়ার্ড অর্থ</p>
+                        <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded font-bold">+৩০.০% YoY</span>
+                    </div>
+                    <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono" id="metricCleared">৳ ১,৩২,৬৯,৫৪৫.০০</p>
+                    <p class="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium"><i class="fa-solid fa-circle-check"></i> SAP S/4HANA অ্যাকাউন্টেড</p>
+                </div>
+                <div class="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 p-3.5 rounded-2xl"><i class="fa-solid fa-vault text-xl"></i></div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <div class="space-y-1">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">ক্যাশ ফোরকাস্ট (Next 7 Days)</p>
+                    <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 font-mono" id="metricForecast">৳ ২.৪৫ কোটি</p>
+                    <p class="text-[10px] text-indigo-700 dark:text-indigo-400 font-medium">প্রত্যাশিত কালেকশন প্রজেকশন</p>
+                </div>
+                <div class="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 p-3.5 rounded-2xl"><i class="fa-solid fa-chart-line text-xl"></i></div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <div class="space-y-1">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Liquidity Reserve Ratio</p>
+                    <p class="text-2xl font-bold text-cyan-600 dark:text-cyan-400 font-mono">100.0% Optimal</p>
+                    <p class="text-[10px] text-cyan-700 dark:text-cyan-400 font-medium">ওয়ার্কিং ক্যাপিটাল রিজার্ভ সুরক্ষিত</p>
+                </div>
+                <div class="bg-cyan-100 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400 p-3.5 rounded-2xl"><i class="fa-solid fa-building-columns text-xl"></i></div>
+            </div>
+        </div>
+
+        <!-- প্রধান ট্যাব ১: ক্লিয়ারেন্স রেজিস্টার -->
+        <div id="sectionMainRegister" class="space-y-6">
+            <!-- ফিল্টার, সার্চ ও ডেনসিটি টগল -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
+                <div class="flex flex-col md:flex-row gap-3 justify-between items-center">
+                    <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto flex-1">
+                        <div class="relative w-full md:w-72">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+                            <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="ডিলার কোড, নাম, UTR (Ctrl+K)..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:border-slate-800 dark:focus:border-slate-600 text-slate-800 dark:text-slate-100">
+                        </div>
+                        <select id="companyFilter" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs rounded-lg px-3 py-2 focus:outline-none font-medium">
+                            <option value="ALL">সকল কোম্পানি (All Entities)</option>
+                            <option value="Butterfly">Butterfly Marketing Ltd</option>
+                            <option value="MHPIL">Minister Hi-Tech Park (MHPIL)</option>
+                            <option value="MEIL">Myone Electronics (MEIL)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2 w-full md:w-auto justify-end items-center">
+                        <button onclick="toggleTableDensity()" id="densityBtn" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs px-3 py-2 rounded-lg font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-table-cells"></i> <span id="densityText">কমপ্যাক্ট ভিউ</span>
+                        </button>
+                        <button onclick="approveSelected()" id="btnBulkApprove" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-check-double"></i> সিলেক্টকৃত পেমেন্ট পোস্ট করুন
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ফিল্টার পিলস -->
+                <div class="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800 flex-wrap">
+                    <span class="text-[11px] text-slate-400 font-medium">দ্রুত ফিল্টার:</span>
+                    <button onclick="setFilterPill('ALL')" class="pill-btn bg-slate-800 text-white text-[11px] px-3 py-0.5 rounded-full font-medium transition" id="pill-ALL">সব লেনদেন</button>
+                    <button onclick="setFilterPill('PENDING')" class="pill-btn bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] px-3 py-0.5 rounded-full font-medium transition" id="pill-PENDING">পেন্ডিং</button>
+                    <button onclick="setFilterPill('POSTED')" class="pill-btn bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] px-3 py-0.5 rounded-full font-medium transition" id="pill-POSTED">পোস্টেড</button>
+                    <button onclick="setFilterPill('HIGH_VALUE')" class="pill-btn bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] px-3 py-0.5 rounded-full font-medium transition" id="pill-HIGH_VALUE">হাই-ভ্যালু (>১০ লাখ)</button>
+                </div>
+            </div>
+
+            <!-- প্রধান লেনদেন ডাটা টেবিল -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+                <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-slate-500"></i> লাইভ পেমেন্ট ও SAP পোস্ট রেজিস্টার
+                    </h3>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">S/4HANA Cloud Sync Active</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse" id="paymentTable">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">
+                                <th class="py-3 px-4 w-10 text-center"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+                                <th class="py-3 px-4">ডিলার ও আইডি</th>
+                                <th class="py-3 px-4">কোম্পানি / ক্যাটাগরি</th>
+                                <th class="py-3 px-4">ব্যাংক তথ্য</th>
+                                <th class="py-3 px-4 text-right">পরিমাণ</th>
+                                <th class="py-3 px-4 text-center">SAP WorkFlow Status</th>
+                                <th class="py-3 px-4 text-center">SAP Doc No</th>
+                                <th class="py-3 px-4 text-center">স্ট্যাটাস</th>
+                                <th class="py-3 px-4 text-center">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800" id="tableBody">
+                            <!-- SR Electronics Park -->
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition" data-status="PENDING" data-company="Butterfly" data-amount="300000" id="row-3000002272">
+                                <td class="py-3.5 px-4 text-center"><input type="checkbox" class="row-checkbox" value="3000002272"></td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-bold text-slate-800 dark:text-slate-100">SR Electronics Park</div>
+                                    <div class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">ID: 3000002272</div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-semibold text-slate-700 dark:text-slate-300">Butterfly Marketing Ltd</div>
+                                    <div class="text-[11px] text-slate-400">Agent Deposit</div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-semibold text-slate-700 dark:text-slate-300">Dutch Bangla Bank PLC</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400">Hatboaliya Branch (1051100008683)</div>
+                                </td>
+                                <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-slate-100 text-sm amount-cell" data-bdt="300000">৳ ৩,০০,০০০.০০</td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-amber-500 h-2 w-2/3"></div>
+                                    </div>
+                                    <span class="text-[9px] text-slate-400 font-mono">Validation Done (66%)</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center font-mono text-slate-600 dark:text-slate-400">5100030102</td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span id="status-3000002272" class="bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-800">Pending</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <div class="flex items-center justify-center gap-1.5" id="action-group-3000002272">
+                                        <button onclick="approveSingle('3000002272')" title="অনুমোদন" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-check"></i></button>
+                                        <button onclick="rejectSingle('3000002272')" title="বাতিল/হোল্ড" class="action-btn bg-rose-600 hover:bg-rose-700 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-xmark"></i></button>
+                                        <button onclick="openVoucherModal('SR Electronics Park', '3000002272', 'Butterfly Marketing Ltd', 'Dutch Bangla Bank PLC (Hatboaliya)', '1051100008683', '3,00,000.00', '5100030102', 'LID02040325203')" title="SAP Voucher" class="bg-slate-800 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-file-lines"></i> JV</button>
+                                        <button onclick="openApiModal('3000002272', '5100030102', '300000.00')" title="SAP Payload Inspector" class="bg-cyan-700 hover:bg-cyan-600 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-code"></i> API</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Minister Hi-Tech Park -->
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition" data-status="POSTED" data-company="MHPIL" data-amount="13269545" id="row-002905">
+                                <td class="py-3.5 px-4 text-center"><input type="checkbox" class="row-checkbox" value="002905" disabled></td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-bold text-slate-800 dark:text-slate-100">Minister Hi-Tech Park</div>
+                                    <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">ID: 002905</div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-semibold text-slate-700 dark:text-slate-300">MHPIL</div>
+                                    <div class="text-[11px] text-slate-400">Direct Cleared</div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-semibold text-slate-700 dark:text-slate-300">Islami Bank Bangladesh Ltd</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400">Banani Branch (125260433)</div>
+                                </td>
+                                <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-slate-100 text-sm amount-cell" data-bdt="13269545">৳ ১,৩২,৬৯,৫৪৫.০০</td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-emerald-500 h-2 w-full"></div>
+                                    </div>
+                                    <span class="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono">Committed (100%)</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center font-mono text-slate-600 dark:text-slate-400">5100029481</td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span class="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">PAID & POSTED</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <button onclick="openVoucherModal('Minister Hi-Tech Park', '002905', 'MHPIL', 'Islami Bank Bangladesh Ltd (Banani)', '20503910100020103', '1,32,69,545.00', '5100029481', 'IBBLFT260701801')" class="bg-slate-800 hover:bg-slate-900 text-white text-[11px] px-2.5 py-1 rounded font-bold transition flex items-center gap-1">
+                                            <i class="fa-solid fa-file-lines"></i> View JV
+                                        </button>
+                                        <button onclick="openApiModal('002905', '5100029481', '13269545.00')" class="bg-cyan-700 hover:bg-cyan-600 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-code"></i> API</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- প্রধান ট্যাব ২: অ্যানালিটিক্স ভিউ -->
+        <div id="sectionAnalyticsView" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 col-span-2">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-xs uppercase text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-area text-indigo-500"></i> কোম্পানিভিত্তিক দৈনিক কালেকশন ও প্রেডিক্টিভ ফোরকাস্ট
+                        </h3>
+                        <span class="text-[10px] text-slate-400 font-mono">Real-time S/4HANA Analytics</span>
+                    </div>
+                    <div class="h-60">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-xs uppercase text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-cyan-500"></i> ব্যাংক চ্যানেল শেয়ার
+                        </h3>
+                    </div>
+                    <div class="h-60 flex items-center justify-center">
+                        <canvas id="bankPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- প্রধান ট্যাব ৩: সাইবার সিকিউরিটি ভিউ -->
+        <div id="sectionSecurityView" class="space-y-6 hidden">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-xs uppercase text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired text-amber-500"></i> ইন্টার-কোম্পানি লেজার ও ফান্ড রোটেটিং ম্যাট্রিক্স (Inter-Company Clearing)
+                    </h3>
+                    <span class="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded font-mono font-bold">Automatic SAP FI-IC Balancing</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-slate-800 dark:text-slate-200">Minister Hi-Tech ⇄ Butterfly</div>
+                            <div class="text-[10px] text-slate-400">Net Receivable Settlement</div>
+                        </div>
+                        <div class="font-mono font-bold text-emerald-600 dark:text-emerald-400">৳ ৪৫,৫০,০০০.০০</div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-slate-800 dark:text-slate-200">Butterfly ⇄ Myone Electronics</div>
+                            <div class="text-[10px] text-slate-400">BEFTN Fund Transfers</div>
+                        </div>
+                        <div class="font-mono font-bold text-cyan-600 dark:text-cyan-400">৳ ১২,৩০,০০০.০০</div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-slate-800 dark:text-slate-200">Myone ⇄ Minister Hi-Tech</div>
+                            <div class="text-[10px] text-slate-400">Direct Clearing Balance</div>
+                        </div>
+                        <div class="font-mono font-bold text-indigo-600 dark:text-indigo-400">৳ ৮,৯০,০০০.০০</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAP BAPI LIVE CONSOLE -->
+        <div class="bg-slate-950 text-slate-200 rounded-xl p-4 border border-slate-800 shadow-2xl font-mono text-xs space-y-2">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-emerald-400"></i>
+                    <span class="font-bold text-slate-300">SAP S/4HANA BAPI & OData Live Payload Stream</span>
+                </div>
+                <button onclick="clearConsole()" class="text-[10px] text-slate-500 hover:text-white transition"><i class="fa-solid fa-trash"></i> ক্লিয়ার লগার</button>
+            </div>
+            <div class="h-28 overflow-y-auto space-y-1 text-[11px] text-emerald-400" id="bapiConsoleLogs">
+                <p class="text-slate-500">[SYSTEM INIT] WebSocket Listening on Endpoint /sap/bc/srt/rfc/sap/bapi_acc_document_post...</p>
+                <p>[2026-08-03 13:25:01 BDT] BAPI_ACC_DOCUMENT_POST -> Doc: 5100030102 Registered (PstKey 40/50 Verified).</p>
+            </div>
+        </div>
+
     </main>
+
+    <!-- FX CALCULATOR MODAL (v20.0 Feature) -->
+    <div id="calcModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 text-slate-100 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-800">
+            <div class="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700">
+                <h3 class="font-bold text-sm flex items-center gap-2 text-amber-400"><i class="fa-solid fa-calculator"></i> Sovereign Currency & FX Converter</h3>
+                <button onclick="closeCalcModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4 text-xs font-mono">
+                <div>
+                    <label class="block text-slate-400 mb-1">পরিমাণ (Amount in BDT)</label>
+                    <input type="number" id="calcInput" value="1000000" oninput="runFxCalc()" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded text-emerald-400 font-bold focus:outline-none text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950 p-3 rounded border border-slate-800">
+                        <span class="text-slate-500 block text-[10px]">USD Equivalent ($)</span>
+                        <strong id="calcUsd" class="text-cyan-400 text-sm">$ 8,298.76</strong>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded border border-slate-800">
+                        <span class="text-slate-500 block text-[10px]">EUR Equivalent (€)</span>
+                        <strong id="calcEur" class="text-indigo-400 text-sm">€ 7,621.95</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-800 px-5 py-3 flex justify-end">
+                <button onclick="closeCalcModal()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-1.5 rounded font-bold">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI RECONCILIATION ANOMALY AUDIT MODAL -->
+    <div id="anomalyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 text-slate-100 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-800">
+            <div class="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700">
+                <h3 class="font-bold text-sm flex items-center gap-2 text-rose-400"><i class="fa-solid fa-shield-virus"></i> Sovereign AI Risk Detector Summary</h3>
+                <button onclick="closeAnomalyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-3 text-xs">
+                <div class="bg-emerald-950/60 border border-emerald-800 p-3 rounded-lg flex items-center gap-3 text-emerald-400">
+                    <i class="fa-solid fa-circle-check text-xl"></i>
+                    <div>
+                        <div class="font-bold text-sm">All Transactions Cleared Security Check</div>
+                        <p class="text-[11px] text-emerald-300">কোনো ডুপ্লিকেট ইউটিআর বা অ্যামাউন্ট মিসম্যাচ পাওয়া যায়নি।</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-800/80 px-5 py-3 flex justify-end">
+                <button onclick="closeAnomalyModal()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs px-4 py-1.5 rounded font-bold">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXECUTIVE BOARD PDF REPORT MODAL -->
+    <div id="execReportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-200 dark:border-slate-800" id="printableExecReport">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-building-columns text-amber-400"></i>
+                    <h3 class="font-bold text-sm">SAP S/4HANA Board Executive Financial Summary</h3>
+                </div>
+                <button onclick="closeExecReportModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-xs">
+                <div class="border-b border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Treasury Board Clearance Audit</h2>
+                        <p class="text-slate-500">Minister Myone Group & Butterfly Marketing Enterprise</p>
+                    </div>
+                    <div class="text-right font-mono">
+                        <p class="text-slate-400 text-[10px]">REPORT DATE</p>
+                        <p class="font-bold text-emerald-600">03-AUG-2026</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <span class="text-slate-400 text-[10px] block">পেন্ডিং ডিপোজিট</span>
+                        <strong class="text-amber-600 font-mono text-base">৳ ৮,৫০,০০০.০০</strong>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <span class="text-slate-400 text-[10px] block">আজকের ক্লিয়ার্ড মোট</span>
+                        <strong class="text-emerald-600 font-mono text-base">৳ ১,৩২,৬৯,৫৪৫.০০</strong>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <span class="text-slate-400 text-[10px] block">সাইবার থ্রেট স্কোর</span>
+                        <strong class="text-cyan-600 font-mono text-base">0.00% (Zero Risk)</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-100 dark:bg-slate-800/80 px-6 py-3 flex justify-between items-center border-t border-slate-200 dark:border-slate-800">
+                <button onclick="window.print()" class="bg-slate-800 text-white text-xs px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5"><i class="fa-solid fa-print"></i> প্রিন্ট সামারি</button>
+                <button onclick="closeExecReportModal()" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs px-4 py-2 rounded-lg font-bold transition">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KEYBOARD SHORTCUTS MODAL -->
+    <div id="shortcutModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 text-slate-100 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-800">
+            <div class="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700">
+                <h3 class="font-bold text-sm flex items-center gap-2 text-amber-400"><i class="fa-solid fa-keyboard"></i> Quantum Keyboard Command Palette</h3>
+                <button onclick="closeShortcutModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-3 text-xs font-mono">
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span>সার্চ বক্সে ফোকাস করুন:</span>
+                    <span class="text-amber-400 font-bold">Ctrl + K / Cmd + K</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span>নতুন পেমেন্ট এন্ট্রি ওপেন:</span>
+                    <span class="text-amber-400 font-bold">Alt + N</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span>সব পেন্ডিং পেমেন্ট পোস্ট:</span>
+                    <span class="text-amber-400 font-bold">Alt + A</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span>অডিট ট্রেইল ড্রয়ার টগল:</span>
+                    <span class="text-amber-400 font-bold">Alt + L</span>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button onclick="closeShortcutModal()" class="bg-slate-800 text-white px-4 py-1.5 rounded font-bold">বন্ধ করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAP BAPI / ODATA PAYLOAD INSPECTOR MODAL -->
+    <div id="apiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 text-slate-100 rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-800">
+            <div class="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700">
+                <h3 class="font-bold text-sm flex items-center gap-2 text-cyan-400"><i class="fa-solid fa-code"></i> SAP S/4HANA OData / BAPI Payload Preview</h3>
+                <button onclick="closeApiModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-3 text-xs font-mono">
+                <p class="text-slate-400">// Endpoint: POST /sap/opu/odata/sap/API_FINANCIAL_DOCUMENT_POST</p>
+                <pre id="jsonPayload" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-emerald-400 overflow-x-auto max-h-60 text-[11px]">Loading JSON...</pre>
+                <div class="flex justify-between items-center pt-2">
+                    <span class="text-[10px] text-slate-500">HTTP Status: 200 OK | Response: Document Committed</span>
+                    <button onclick="closeApiModal()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-1.5 rounded font-bold">বন্ধ করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- নতুন পেমেন্ট এন্ট্রি মডাল -->
+    <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-plus text-cyan-400"></i> ম্যানুয়াল পেমেন্ট ডিপোজিট এন্ট্রি</h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="addNewPayment(event)" class="p-5 space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">ডিলার আইডি (Dealer Code)</label>
+                    <input type="text" id="newCode" required placeholder="যেমন: 3000002272" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">ডিলারের নাম (Dealer Name)</label>
+                    <input type="text" id="newName" required placeholder="যেমন: Salsabila Electronics" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">কোম্পানি</label>
+                        <select id="newCompany" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs">
+                            <option value="Butterfly">Butterfly Marketing</option>
+                            <option value="MHPIL">Minister Hi-Tech</option>
+                            <option value="MEIL">Myone Electronics</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">পরিমাণ (BDT)</label>
+                        <input type="number" id="newAmount" required placeholder="500000" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">ব্যাংক ও শাখা</label>
+                    <input type="text" id="newBank" required placeholder="Islami Bank Bangladesh Ltd (Nawabpur)" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs focus:outline-none">
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeAddModal()" class="bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-2 rounded font-bold">বাতিল</button>
+                    <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded font-bold">এন্ট্রি জমা দিন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- অডিট ড্রয়ার -->
+    <div id="auditDrawer" class="fixed inset-y-0 right-0 w-80 bg-slate-900 text-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 border-l border-slate-800 p-5 flex flex-col justify-between">
+        <div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                <h3 class="font-bold text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> অডিট ট্রেইল ও অ্যাক্টিভিটি লগ
+                </h3>
+                <button onclick="toggleAuditDrawer()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs overflow-y-auto max-h-[75vh]" id="auditLogs">
+                <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
+                    <span class="text-[10px] text-emerald-400 font-mono block">2026-08-03 BDT</span>
+                    <p class="font-medium text-slate-200">v20.0 Sovereign Suite সক্রিয়।</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-[10px] text-slate-500 text-center border-t border-slate-800 pt-3">
+            SAP S/4HANA Enterprise Security Verified
+        </div>
+    </div>
+
+    <!-- SAP FI JOURNAL VOUCHER (JV) MODAL -->
+    <div id="voucherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-200 dark:border-slate-800" id="printableVoucher">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-emerald-400"></i>
+                    <h3 class="font-bold text-sm">SAP FI Journal Voucher (JV) - Official Ledger</h3>
+                </div>
+                <button onclick="closeVoucherModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="border-b border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-start">
+                    <div>
+                        <h4 class="font-bold text-base" id="modalDealer">SR Electronics Park</h4>
+                        <p class="text-xs text-slate-500">ডিলার আইডি: <span id="modalCode" class="font-mono font-bold">3000002272</span> | কোম্পানি: <span id="modalCompany" class="font-semibold">Butterfly</span></p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] uppercase font-bold text-slate-400">SAP Document No</span>
+                        <div class="text-base font-mono font-bold text-emerald-600 dark:text-emerald-400" id="modalDoc">5100030102</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-200 dark:border-slate-700 space-y-2">
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Accounting Entries (Post Keys 40/50)</p>
+                    <table class="w-full text-xs">
+                        <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 font-semibold">
+                            <th class="py-1">PstKey</th>
+                            <th class="py-1">Account / GL Master</th>
+                            <th class="py-1 text-right">Amount</th>
+                        </tr>
+                        <tr>
+                            <td class="py-1.5 font-mono text-emerald-600 font-bold">40 (Debit)</td>
+                            <td class="py-1.5" id="modalBank">Dutch Bangla Bank PLC (Hatboaliya)</td>
+                            <td class="py-1.5 text-right font-mono font-bold" id="modalAmount">৳ ৩,০০,০০০.০০</td>
+                        </tr>
+                        <tr>
+                            <td class="py-1.5 font-mono text-blue-600 font-bold">50 (Credit)</td>
+                            <td class="py-1.5">Customer AR Clearing Ledger Account</td>
+                            <td class="py-1.5 text-right font-mono font-bold" id="modalAmount2">৳ ৩,০০,০০০.০০</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <span class="text-slate-400 block text-[10px]">ব্যাংক অ্যাকাউন্ট নম্বর</span>
+                        <span class="font-mono font-bold" id="modalAccNum">1051100008683</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <span class="text-slate-400 block text-[10px]">ট্রানজেকশন ID / UTR Ref</span>
+                        <span class="font-mono font-bold" id="modalRef">LID02040325203</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-100 dark:bg-slate-800/80 px-6 py-3 flex justify-between items-center border-t border-slate-200 dark:border-slate-800">
+                <button onclick="window.print()" class="bg-slate-800 text-white text-xs px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5"><i class="fa-solid fa-print"></i> প্রিন্ট ভাউচার</button>
+                <button onclick="closeVoucherModal()" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs px-4 py-2 rounded-lg font-bold transition">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
 
     <!-- টোস্ট নোটিফিকেশন -->
     <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl text-xs flex items-center gap-3 opacity-0 transition-opacity duration-300 pointer-events-none z-50">
-        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
-        <span id="toastMsg">সিস্টেম সফলভাবে আপডেট করা হয়েছে!</span>
+        <i class="fa-solid fa-circle-info text-amber-400 text-base" id="toastIcon"></i>
+        <span id="toastMsg">v20.0 পোর্টাল অনলাইল</span>
     </div>
 
     <script>
-        function filterTable() {
-            let input = document.getElementById("searchInput").value.toUpperCase();
-            let trs = document.getElementById("paymentTable").getElementsByTagName("tr");
-            for (let i = 1; i < trs.length; i++) {
-                let text = trs[i].innerText.toUpperCase();
-                trs[i].style.display = text.indexOf(input) > -1 ? "" : "none";
+        let currentPillFilter = 'ALL';
+        let currentCurrency = 'BDT';
+        let isAutoPilotActive = false;
+        let autoPilotInterval = null;
+        let isVoiceActive = false;
+        let isLiveSimActive = false;
+        let liveSimInterval = null;
+        let isCompactDensity = false;
+        const usdRate = 120.5;
+        const eurRate = 131.2;
+
+        window.onload = function() {
+            initCharts();
+        };
+
+        function openCalcModal() { document.getElementById('calcModal').classList.remove('hidden'); }
+        function closeCalcModal() { document.getElementById('calcModal').classList.add('hidden'); }
+
+        function runFxCalc() {
+            const bdt = parseFloat(document.getElementById('calcInput').value || 0);
+            document.getElementById('calcUsd').innerText = "$ " + (bdt / usdRate).toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById('calcEur').innerText = "€ " + (bdt / eurRate).toLocaleString('en-US', {maximumFractionDigits: 2});
+        }
+
+        function openAnomalyModal() { document.getElementById('anomalyModal').classList.remove('hidden'); }
+        function closeAnomalyModal() { document.getElementById('anomalyModal').classList.add('hidden'); }
+
+        function exportToJSON() {
+            let data = [];
+            let rows = document.querySelectorAll("#paymentTable tbody tr");
+            rows.forEach(row => {
+                let cols = row.querySelectorAll("td");
+                data.push({
+                    dealer: cols[1].innerText.split("\n")[0],
+                    dealer_id: cols[1].innerText.split("\n")[1],
+                    company: cols[2].innerText.split("\n")[0],
+                    bank: cols[3].innerText.split("\n")[0],
+                    amount: cols[4].innerText,
+                    sap_doc_no: cols[6].innerText,
+                    status: cols[7].innerText
+                });
+            });
+            let jsonFile = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = "SAP_ERP_Treasury_Data_v20.json";
+            downloadLink.href = window.URL.createObjectURL(jsonFile);
+            downloadLink.click();
+            showToast("JSON ডাটা এক্সপোর্ট সম্পন্ন হয়েছে।", "success");
+        }
+
+        function switchTab(tab) {
+            document.getElementById('sectionMainRegister').classList.add('hidden');
+            document.getElementById('sectionAnalyticsView').classList.add('hidden');
+            document.getElementById('sectionSecurityView').classList.add('hidden');
+
+            document.getElementById('tabMain').className = "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5";
+            document.getElementById('tabAnalytics').className = "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5";
+            document.getElementById('tabSecurity').className = "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5";
+
+            if(tab === 'mainRegister') {
+                document.getElementById('sectionMainRegister').classList.remove('hidden');
+                document.getElementById('tabMain').className = "bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow";
+            } else if(tab === 'analyticsView') {
+                document.getElementById('sectionAnalyticsView').classList.remove('hidden');
+                document.getElementById('tabAnalytics').className = "bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow";
+            } else if(tab === 'securityView') {
+                document.getElementById('sectionSecurityView').classList.remove('hidden');
+                document.getElementById('tabSecurity').className = "bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow";
             }
         }
 
+        function appendBapiConsoleLog(msg) {
+            const consoleBox = document.getElementById('bapiConsoleLogs');
+            const timeStr = new Date().toLocaleTimeString('bn-BD', { hour12: false });
+            const p = document.createElement('p');
+            p.innerText = `[${timeStr}] ${msg}`;
+            consoleBox.appendChild(p);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('bapiConsoleLogs').innerHTML = '<p class="text-slate-500">[CONSOLE CLEARED] S/4HANA OData Stream Ready...</p>';
+        }
+
+        function speakText(text) {
+            try {
+                if ('speechSynthesis' in window) {
+                    let msg = new SpeechSynthesisUtterance(text);
+                    msg.rate = 1.0;
+                    window.speechSynthesis.speak(msg);
+                }
+            } catch(e) {}
+        }
+
+        function toggleTableDensity() {
+            isCompactDensity = !isCompactDensity;
+            const table = document.getElementById('paymentTable');
+            const btnText = document.getElementById('densityText');
+            if(isCompactDensity) {
+                table.classList.add('table-compact');
+                btnText.innerText = "নরমাল ভিউ";
+            } else {
+                table.classList.remove('table-compact');
+                btnText.innerText = "কমপ্যাক্ট ভিউ";
+            }
+        }
+
+        function toggleLiveFeedSim() {
+            isLiveSimActive = !isLiveSimActive;
+            const btn = document.getElementById('liveFeedBtn');
+            const statusText = document.getElementById('liveFeedStatus');
+
+            if(isLiveSimActive) {
+                btn.className = "bg-emerald-600 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1 shadow animate-pulse";
+                statusText.innerText = "Live Feed: ON";
+                showToast("লাইভ ট্রানজেকশন সিমুলেশন চালু হয়েছে!", "info");
+                
+                liveSimInterval = setInterval(() => {
+                    const mockNames = ["Rahim Telecom", "Bismillah Electronics", "Sujan Traders", "Chittagong Agency"];
+                    const name = mockNames[Math.floor(Math.random() * mockNames.length)];
+                    const code = '30000' + Math.floor(10000 + Math.random() * 90000);
+                    const amount = Math.floor(1 + Math.random() * 8) * 100000;
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/60 transition";
+                    tr.setAttribute("data-status", "PENDING");
+                    tr.setAttribute("data-company", "Butterfly");
+                    tr.setAttribute("data-amount", amount);
+                    tr.id = "row-" + code;
+
+                    tr.innerHTML = `
+                        <td class="py-3.5 px-4 text-center"><input type="checkbox" class="row-checkbox" value="${code}"></td>
+                        <td class="py-3.5 px-4"><div class="font-bold text-slate-800 dark:text-slate-100">${name}</div><div class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">ID: ${code}</div></td>
+                        <td class="py-3.5 px-4"><div class="font-semibold text-slate-700 dark:text-slate-300">Butterfly Marketing Ltd</div><div class="text-[11px] text-slate-400">Live Stream</div></td>
+                        <td class="py-3.5 px-4"><div class="font-semibold text-slate-700 dark:text-slate-300">Islami Bank Bangladesh Ltd</div></td>
+                        <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-slate-100 text-sm amount-cell" data-bdt="${amount}">৳ ${amount.toLocaleString('bn-BD')}.০০</td>
+                        <td class="py-3.5 px-4 text-center"><div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden"><div class="bg-amber-500 h-2 w-1/3"></div></div><span class="text-[9px] text-slate-400 font-mono">Streamed (33%)</span></td>
+                        <td class="py-3.5 px-4 text-center font-mono text-slate-600 dark:text-slate-400">51000${Math.floor(10000+Math.random()*90000)}</td>
+                        <td class="py-3.5 px-4 text-center"><span id="status-${code}" class="bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-800">Pending</span></td>
+                        <td class="py-3.5 px-4 text-center">
+                            <div class="flex items-center justify-center gap-1.5" id="action-group-${code}">
+                                <button onclick="approveSingle('${code}')" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-1 rounded font-bold"><i class="fa-solid fa-check"></i></button>
+                                <button onclick="rejectSingle('${code}')" class="action-btn bg-rose-600 hover:bg-rose-700 text-white text-[11px] px-2 py-1 rounded font-bold"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    document.getElementById('tableBody').prepend(tr);
+                    playSoundAlert();
+                    appendBapiConsoleLog(`NEW FEED -> Dealer: ${code} (${name}) Streamed BDT ${amount}`);
+                    showToast("নতুন পেমেন্ট ফিড স্ট্রিম হয়েছে: " + name, "success");
+                    recalculateMetrics();
+                }, 8000);
+            } else {
+                btn.className = "bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1";
+                statusText.innerText = "Live Feed: OFF";
+                clearInterval(liveSimInterval);
+                showToast("লাইভ ফিড বন্ধ করা হয়েছে।", "info");
+            }
+        }
+
+        function openExecReportModal() { document.getElementById('execReportModal').classList.remove('hidden'); }
+        function closeExecReportModal() { document.getElementById('execReportModal').classList.add('hidden'); }
+
+        function handleGlobalShortcuts(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            } else if (e.altKey && e.key.toLowerCase() === 'n') {
+                e.preventDefault();
+                openAddModal();
+            } else if (e.altKey && e.key.toLowerCase() === 'l') {
+                e.preventDefault();
+                toggleAuditDrawer();
+            } else if (e.altKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                approveSelected();
+            }
+        }
+
+        function openShortcutModal() { document.getElementById('shortcutModal').classList.remove('hidden'); }
+        function closeShortcutModal() { document.getElementById('shortcutModal').classList.add('hidden'); }
+
+        function toggleVoiceAssistant() {
+            isVoiceActive = !isVoiceActive;
+            const btn = document.getElementById('voiceBtn');
+            const statusText = document.getElementById('voiceStatus');
+
+            if(isVoiceActive) {
+                btn.className = "bg-cyan-600 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1 animate-pulse";
+                statusText.innerText = "Listening...";
+                showToast("ভয়েস কমান্ড অ্যাসিস্ট্যান্ট অন করা হয়েছে।", "info");
+                speakText("Voice Assistant Enabled");
+            } else {
+                btn.className = "bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-400 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1";
+                statusText.innerText = "Voice AI";
+                showToast("ভয়েস অ্যাসিস্ট্যান্ট বন্ধ করা হয়েছে।", "info");
+            }
+        }
+
+        function toggleAutoPilot() {
+            isAutoPilotActive = !isAutoPilotActive;
+            const btn = document.getElementById('autoPilotBtn');
+            const statusText = document.getElementById('autoPilotStatus');
+
+            if(isAutoPilotActive) {
+                btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1 shadow-md animate-pulse";
+                statusText.innerText = "Auto-Pilot: ON";
+                showToast("অটোনোমাস এআই ব্যাকগ্রাউন্ড অটো-পোস্টিং চালু করা হয়েছে!", "success");
+                speakText("Auto Pilot Activated");
+                
+                autoPilotInterval = setInterval(() => {
+                    let pendingRows = document.querySelectorAll('tbody tr[data-status="PENDING"]');
+                    if(pendingRows.length > 0) {
+                        let code = pendingRows[0].querySelector('.row-checkbox').value;
+                        approveSingle(code);
+                        showToast("AI Auto-Pilot: ডিলার " + code + "-এর পেমেন্ট অটো-পোস্ট করেছে!", "success");
+                    }
+                }, 4000);
+            } else {
+                btn.className = "bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1";
+                statusText.innerText = "Auto-Pilot";
+                clearInterval(autoPilotInterval);
+                showToast("অটোনোমাস এআই অটো-পাইলট বন্ধ করা হয়েছে।", "info");
+            }
+        }
+
+        function playSoundAlert() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        function changeCurrency() {
+            currentCurrency = document.getElementById('currencySelect').value;
+            let symbol = currentCurrency === 'USD' ? '$' : (currentCurrency === 'EUR' ? '€' : '৳');
+            let pendingBdt = 850000;
+            let clearedBdt = 13269545;
+
+            let rate = currentCurrency === 'USD' ? usdRate : (currentCurrency === 'EUR' ? eurRate : 1);
+            
+            document.getElementById('metricPending').innerText = symbol + " " + (pendingBdt / rate).toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById('metricCleared').innerText = symbol + " " + (clearedBdt / rate).toLocaleString('en-US', {maximumFractionDigits: 2});
+
+            document.querySelectorAll('.amount-cell').forEach(cell => {
+                let bdtAmt = parseFloat(cell.getAttribute('data-bdt') || 0);
+                cell.innerText = symbol + " " + (bdtAmt / rate).toLocaleString('en-US', {maximumFractionDigits: 2});
+            });
+
+            showToast("গ্লোবাল কারেন্সি ভিউ পরিবর্তন করা হয়েছে: " + currentCurrency, "info");
+        }
+
+        function initCharts() {
+            const ctx1 = document.getElementById('forecastChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['03-Aug', '04-Aug', '05-Aug', '06-Aug', '07-Aug', '08-Aug', '09-Aug'],
+                    datasets: [{
+                        label: 'দৈনিক ট্রেন্ড ও প্রেডিক্টিভ ক্যাশ প্রজেকশন (BDT)',
+                        data: [13569545, 14200000, 15800000, 16100000, 18500000, 21000000, 24500000],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: false } }
+                }
+            });
+
+            const ctx2 = document.getElementById('bankPieChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Islami Bank (IBBL)', 'Dutch Bangla (DBBL)'],
+                    datasets: [{
+                        data: [13819545, 300000],
+                        backgroundColor: ['#2563eb', '#10b981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
+                }
+            });
+        }
+
+        function changeRole() {
+            const role = document.getElementById('userRole').value;
+            const actionBtns = document.querySelectorAll('.action-btn');
+            const bulkBtn = document.getElementById('btnBulkApprove');
+            
+            if(role === 'AUDITOR') {
+                actionBtns.forEach(btn => btn.style.display = 'none');
+                if(bulkBtn) bulkBtn.style.display = 'none';
+                showToast("অডিটর মোড অন: অনুমোদন/বাতিল বাটন হাইড করা হয়েছে।", "info");
+            } else {
+                actionBtns.forEach(btn => btn.style.display = 'inline-block');
+                if(bulkBtn) bulkBtn.style.display = 'flex';
+                showToast("ট্রেজারি ম্যানেজার মোড সক্রিয়!", "success");
+            }
+        }
+
+        function openApiModal(code, doc, amount) {
+            const json = {
+                "CompanyCode": "MHPIL/BUTTERFLY",
+                "CustomerNumber": code,
+                "DocumentNumber": doc,
+                "ClearedAmountBDT": amount,
+                "PostingDate": "2026-08-03",
+                "TransactionReference": "IBBL/DBBL-CLEARED",
+                "SAP_BAPI_Status": "SUCCESS"
+            };
+            document.getElementById('jsonPayload').innerText = JSON.stringify(json, null, 2);
+            document.getElementById('apiModal').classList.remove('hidden');
+        }
+
+        function closeApiModal() { document.getElementById('apiModal').classList.add('hidden'); }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-moon text-sm';
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-sun text-sm text-amber-300';
+            }
+        }
+
+        function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
+        function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
+
+        function addNewPayment(e) {
+            e.preventDefault();
+            const code = document.getElementById('newCode').value;
+            const name = document.getElementById('newName').value;
+            const company = document.getElementById('newCompany').value;
+            const amount = parseFloat(document.getElementById('newAmount').value);
+            const bank = document.getElementById('newBank').value;
+            const randomDoc = '51000' + Math.floor(10000 + Math.random() * 90000);
+
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/60 transition";
+            tr.setAttribute("data-status", "PENDING");
+            tr.setAttribute("data-company", company);
+            tr.setAttribute("data-amount", amount);
+            tr.id = "row-" + code;
+
+            tr.innerHTML = `
+                <td class="py-3.5 px-4 text-center"><input type="checkbox" class="row-checkbox" value="${code}"></td>
+                <td class="py-3.5 px-4"><div class="font-bold text-slate-800 dark:text-slate-100">${name}</div><div class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">ID: ${code}</div></td>
+                <td class="py-3.5 px-4"><div class="font-semibold text-slate-700 dark:text-slate-300">${company}</div><div class="text-[11px] text-slate-400">Manual Entry</div></td>
+                <td class="py-3.5 px-4"><div class="font-semibold text-slate-700 dark:text-slate-300">${bank}</div></td>
+                <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-slate-100 text-sm amount-cell" data-bdt="${amount}">৳ ${amount.toLocaleString('bn-BD')}.০০</td>
+                <td class="py-3.5 px-4 text-center">
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden"><div class="bg-amber-500 h-2 w-1/3"></div></div>
+                    <span class="text-[9px] text-slate-400 font-mono">Entered (33%)</span>
+                </td>
+                <td class="py-3.5 px-4 text-center font-mono text-slate-600 dark:text-slate-400">${randomDoc}</td>
+                <td class="py-3.5 px-4 text-center"><span id="status-${code}" class="bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-800">Pending</span></td>
+                <td class="py-3.5 px-4 text-center">
+                    <div class="flex items-center justify-center gap-1.5" id="action-group-${code}">
+                        <button onclick="approveSingle('${code}')" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-1 rounded font-bold"><i class="fa-solid fa-check"></i></button>
+                        <button onclick="rejectSingle('${code}')" class="action-btn bg-rose-600 hover:bg-rose-700 text-white text-[11px] px-2 py-1 rounded font-bold"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </td>
+            `;
+
+            document.getElementById('tableBody').appendChild(tr);
+            closeAddModal();
+            playSoundAlert();
+            appendBapiConsoleLog(`MANUAL POST -> Dealer: ${code} (${name}) Created Doc: ${randomDoc}`);
+            showToast("নতুন পেমেন্ট সফলভাবে এন্ট্রি করা হয়েছে!", "success");
+            addAuditLog(`নতুন পেমেন্ট এন্ট্রি: ${name} (ID: ${code}) - BDT ${amount}`);
+            recalculateMetrics();
+        }
+
+        function applyFilters() {
+            let search = document.getElementById("searchInput").value.toUpperCase();
+            let company = document.getElementById("companyFilter").value;
+            let trs = document.getElementById("paymentTable").querySelectorAll("tbody tr");
+
+            trs.forEach(row => {
+                let text = row.innerText.toUpperCase();
+                let rowCompany = row.getAttribute("data-company");
+                let rowStatus = row.getAttribute("data-status");
+                let rowAmount = parseFloat(row.getAttribute("data-amount") || 0);
+
+                let matchesSearch = text.indexOf(search) > -1;
+                let matchesCompany = (company === "ALL" || rowCompany === company);
+                
+                let matchesPill = true;
+                if(currentPillFilter === 'PENDING') matchesPill = (rowStatus === 'PENDING');
+                if(currentPillFilter === 'POSTED') matchesPill = (rowStatus === 'POSTED');
+                if(currentPillFilter === 'HIGH_VALUE') matchesPill = (rowAmount >= 1000000);
+
+                if (matchesSearch && matchesCompany && matchesPill) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        function setFilterPill(pill) {
+            currentPillFilter = pill;
+            document.querySelectorAll('.pill-btn').forEach(btn => {
+                btn.className = "pill-btn bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] px-3 py-0.5 rounded-full font-medium transition";
+            });
+            let activeBtn = document.getElementById('pill-' + pill);
+            if(activeBtn) {
+                activeBtn.className = "pill-btn bg-slate-800 text-white text-[11px] px-3 py-0.5 rounded-full font-medium transition";
+            }
+            applyFilters();
+        }
+
+        function toggleSelectAll(master) {
+            let checkboxes = document.querySelectorAll(".row-checkbox");
+            checkboxes.forEach(cb => {
+                if(!cb.disabled) cb.checked = master.checked;
+            });
+        }
+
         function approveSingle(id) {
+            let row = document.getElementById('row-' + id);
+            if(!row) return;
             let status = document.getElementById('status-' + id);
-            let btn = document.getElementById('btn-' + id);
+            let actionGroup = document.getElementById('action-group-' + id);
             
-            status.className = "bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200";
-            status.innerText = "PAID & POSTED";
+            row.setAttribute("data-status", "POSTED");
+            if(status) {
+                status.className = "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800";
+                status.innerText = "PAID & POSTED";
+            }
             
-            btn.disabled = true;
-            btn.className = "bg-slate-200 text-slate-400 text-[11px] px-3 py-1 rounded font-bold cursor-not-allowed";
-            btn.innerText = "পোস্টেড";
-
-            showToast("ডিলার " + id + "-এর পেমেন্ট SAP এ সফলভাবে পোস্ট হয়েছে!");
+            if(actionGroup) {
+                actionGroup.innerHTML = `
+                    <span class="text-emerald-600 font-bold text-[11px]"><i class="fa-solid fa-circle-check"></i> পোস্টেড</span>
+                    <button onclick="openApiModal('${id}', '5100030102', '300000.00')" class="bg-cyan-700 hover:bg-cyan-600 text-white text-[11px] px-2 py-1 rounded font-bold transition ml-1"><i class="fa-solid fa-code"></i> API</button>
+                `;
+            }
+            playSoundAlert();
+            appendBapiConsoleLog(`POST SUCCESS -> Dealer ID: ${id} Posted to S/4HANA GL Ledger.`);
+            speakText("Payment Approved");
+            recalculateMetrics();
         }
 
-        function approveAllPending() {
-            approveSingle('3000002272');
-            showToast("সমস্ত পেন্ডিং পেমেন্ট অটো-অনুমোদিত হয়েছে!");
+        function rejectSingle(id) {
+            let row = document.getElementById('row-' + id);
+            let status = document.getElementById('status-' + id);
+            let actionGroup = document.getElementById('action-group-' + id);
+            
+            row.setAttribute("data-status", "REJECTED");
+            status.className = "bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-rose-200 dark:border-rose-800";
+            status.innerText = "REJECTED / HOLD";
+            
+            actionGroup.innerHTML = '<span class="text-rose-600 font-bold text-[11px]"><i class="fa-solid fa-circle-xmark"></i> বাতিলকৃত</span>';
+            appendBapiConsoleLog(`HOLD ENTRY -> Dealer ID: ${id} Put on Audit Hold.`);
+            showToast("ডিলার " + id + "-এর পেমেন্ট হোল্ড করা হয়েছে!", "error");
+            addAuditLog("ডিলার ID: " + id + "-এর পেমেন্ট হোল্ড করা হয়েছে।");
+            recalculateMetrics();
         }
 
-        function refreshData() {
-            showToast("সিস্টেম ডাটা সিনক্রোনাইজ করা হয়েছে।");
+        function approveSelected() {
+            let selected = document.querySelectorAll(".row-checkbox:checked");
+            if(selected.length === 0) {
+                showToast("অনুগ্রহ করে অন্তত একটি পেন্ডিং পেমেন্ট নির্বাচন করুন।", "info");
+                return;
+            }
+            selected.forEach(cb => approveSingle(cb.value));
+            document.getElementById("selectAll").checked = false;
+            playSoundAlert();
+            showToast("সিলেক্টকৃত পেমেন্টগুলো SAP এ পোস্ট করা হয়েছে!", "success");
         }
 
-        function showToast(msg) {
+        function recalculateMetrics() {
+            let pendingRows = document.querySelectorAll('tbody tr[data-status="PENDING"]');
+            let totalPendingAmt = 0;
+            pendingRows.forEach(row => {
+                totalPendingAmt += parseFloat(row.getAttribute('data-amount') || 0);
+            });
+            document.getElementById('metricPending').innerText = "৳ " + totalPendingAmt.toLocaleString('bn-BD') + ".০০";
+            document.getElementById('pendingCountText').innerText = pendingRows.length + "টি পেমেন্ট অনুমোদনের অপেক্ষায়";
+        }
+
+        function addAuditLog(text) {
+            let logsContainer = document.getElementById("auditLogs");
+            let timeStr = new Date().toLocaleTimeString('bn-BD', { hour12: true });
+            let logHtml = `
+                <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
+                    <span class="text-[10px] text-emerald-400 font-mono block">${timeStr} BDT</span>
+                    <p class="font-medium text-slate-200">${text}</p>
+                </div>
+            `;
+            logsContainer.innerHTML = logHtml + logsContainer.innerHTML;
+        }
+
+        function toggleAuditDrawer() { document.getElementById("auditDrawer").classList.toggle("translate-x-full"); }
+
+        function openVoucherModal(dealer, code, company, bank, accNum, amount, docNo, ref) {
+            document.getElementById('modalDealer').innerText = dealer;
+            document.getElementById('modalCode').innerText = code;
+            document.getElementById('modalCompany').innerText = company;
+            document.getElementById('modalBank').innerText = bank;
+            document.getElementById('modalAccNum').innerText = accNum;
+            document.getElementById('modalAmount').innerText = "৳ " + amount;
+            document.getElementById('modalAmount2').innerText = "৳ " + amount;
+            document.getElementById('modalDoc').innerText = docNo;
+            document.getElementById('modalRef').innerText = ref;
+
+            document.getElementById('voucherModal').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+        }
+
+        function closeVoucherModal() {
+            document.getElementById('voucherModal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        function exportToCSV() {
+            let csv = [];
+            let rows = document.querySelectorAll("#paymentTable tr");
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 1; j < cols.length; j++) {
+                    row.push('"' + cols[j].innerText.replace(/\n/g, " ") + '"');
+                }
+                csv.push(row.join(","));
+            }
+            let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = "SAP_ERP_Treasury_Report_v20.csv";
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.click();
+            showToast("CSV রিপোর্ট ডাউনলোড সম্পন্ন হয়েছে।", "success");
+        }
+
+        function showToast(msg, type) {
             let t = document.getElementById('toast');
+            let icon = document.getElementById('toastIcon');
             document.getElementById('toastMsg').innerText = msg;
+            
+            if(type === "error") { icon.className = "fa-solid fa-circle-xmark text-rose-400 text-base"; }
+            else if(type === "success") { icon.className = "fa-solid fa-circle-check text-emerald-400 text-base"; }
+            else { icon.className = "fa-solid fa-circle-info text-blue-400 text-base"; }
+
             t.classList.remove('opacity-0', 'pointer-events-none');
             setTimeout(() => t.classList.add('opacity-0', 'pointer-events-none'), 3000);
         }
     </script>
 </body>
 </html>
-```eof
-
-**যুক্ত করা নতুন সুবিধাসমূহ:**
-* **সার্চ ও লাইভ ফিল্টারিং:** ডিলার কোড বা ব্যাংকের নাম দিয়ে তাৎক্ষণিক তথ্য খুঁজে নেওয়ার ব্যবস্থা।
-* **লাইভ ফিন্যান্সিয়াল মেট্রিক্স:** পেন্ডিং, অটো-ক্লিয়ার করা টাকা ও রিলিজ হওয়া ইনভেন্টরির হিসাব দেখার প্যানেল।
-* **সংশোধিত ডিলার রেকর্ড:** SR Electronics Park (ডিলার আইডি: `3000002272`) এর আপডেট অন্তর্ভুক্ত করা হয়েছে।
