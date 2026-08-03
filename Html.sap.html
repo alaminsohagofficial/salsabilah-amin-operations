@@ -32,13 +32,12 @@
                 <div>
                     <h1 class="text-lg font-bold tracking-wide flex items-center gap-2">
                         S.R. Electronics Park
-                        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold">v22.0 Repo Synced</span>
+                        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold">v22.0 Production</span>
                     </h1>
                     <p class="text-xs text-slate-400">প্রোপ্রাইটর: MD. AL AMIN SOHAG | Butterfly Marketing Ltd. অনুমোদিত ডিলার</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <!-- GitHub Action status -->
                 <span class="hidden md:flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-emerald-400 text-[11px] px-2.5 py-1 rounded font-mono">
                     <i class="fa-solid fa-circle-check text-[9px] text-emerald-400 animate-pulse"></i> compile_pdfs.yml: Pass
                 </span>
@@ -132,7 +131,6 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
-                        <!-- SR Electronics Park Row -->
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition" id="row-3000002272">
                             <td class="py-3.5 px-4">
                                 <div class="font-bold text-slate-800 dark:text-slate-100">S.R. Electronics Park</div>
@@ -201,26 +199,16 @@
     </div>
 
     <script>
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-        }
-        function openVoucherModal() {
-            document.getElementById('voucherModal').classList.remove('hidden');
-        }
-        function closeVoucherModal() {
-            document.getElementById('voucherModal').classList.add('hidden');
-        }
-        function triggerEmailDispatch() {
-            showToast("scripts/send_email.py সক্রিয় করা হয়েছে। ইমেইল প্রেরিত হচ্ছে...", "info");
-        }
+        function toggleTheme() { document.documentElement.classList.toggle('dark'); }
+        function openVoucherModal() { document.getElementById('voucherModal').classList.remove('hidden'); }
+        function closeVoucherModal() { document.getElementById('voucherModal').classList.add('hidden'); }
+        function triggerEmailDispatch() { showToast("scripts/send_email.py সক্রিয় করা হয়েছে। ইমেইল প্রেরিত হচ্ছে...", "info"); }
         function approveSingle(id) {
             document.getElementById('status-' + id).innerText = "PAID & POSTED";
             document.getElementById('status-' + id).className = "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800";
             showToast("S.R. Electronics Park এর পেমেন্ট SAP FI এ পোস্টেড করা হয়েছে!", "success");
         }
-        function exportToCSV() {
-            showToast("CSV রিপোট ডাউনলোড করা হয়েছে।", "success");
-        }
+        function exportToCSV() { showToast("CSV রিপোট ডাউনলোড করা হয়েছে।", "success"); }
         function showToast(msg, type) {
             let t = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = msg;
@@ -230,9 +218,3 @@
     </script>
 </body>
 </html>
-```eof
-
-### v22.0 Production Integration ফিচারসমূহ
-* **GitHub Repository Data Integration:** আপনার `salsabilah-amin-operations` রিপোজিটরির অরিজিনাল সত্ত্বা **S.R. Electronics Park**, প্রোপ্রাইটর **MD. AL AMIN SOHAG**, এবং Butterfly Marketing Ltd.-এর ডিলারশিপ ডাটা প্যানেলে যুক্ত করা হয়েছে।
-* **PO & RTGS Audit Tracking:** পারচেজ অর্ডার `#e000010109` (৳1.43 Crore ECO+ Refrigerator Units) এবং অফিসিয়াল অডিট রেফারেন্স `SR-BML-2026-RTGS-RECON-FINAL` হেডারে লাইভ ট্র্যাক করা হয়েছে।
-* **Workflow & Automation Scripts Alignment:** রিপোজিটরিতে থাকা `compile_pdfs.yml` এবং `scripts/send_email.py`-এর সরাসরি স্টেটাস নোটিফিকেশন ইন্টারফেস যুক্ত করা হয়েছে।
