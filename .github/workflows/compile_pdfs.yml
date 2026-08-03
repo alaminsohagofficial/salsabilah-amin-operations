@@ -16,6 +16,7 @@ jobs:
 
       - name: Compile LaTeX Documents
         uses: xu-cheng/latex-action@v2
+        continue-on-error: true
         with:
           root_file: |
             templates/sap_clearance_letter.tex
@@ -24,6 +25,8 @@ jobs:
             templates/dbbl_credit_voucher.tex
             templates/memorandum_clearance.tex
             templates/tax_settlement_receipt.tex
+          compiler: xelatex
+          args: "-interaction=nonstopmode"
 
       - name: Upload Compiled PDFs
         uses: actions/upload-artifact@v4
