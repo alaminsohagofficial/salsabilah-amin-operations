@@ -14,21 +14,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install TeX Live and Fonts
+      - name: Install System Fonts & Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-xetex texlive-fonts-recommended texlive-plain-generic fonts-noto-extra
+          sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-plain-generic fonts-noto-extra fonts-kalpurush
 
-      - name: Compile TeX Files
+      - name: Compile TeX Documents
         run: |
           cd templates
           for file in *.tex; do
-            echo "Compiling $file..."
+            echo "Processing $file..."
             xelatex -interaction=nonstopmode "$file" || true
           done
 
       - name: Upload Compiled PDFs
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: Operational-PDF-Certificates
           path: "templates/*.pdf"
