@@ -1,0 +1,22 @@
+name: Salsabilah Background Automation
+
+on:
+  schedule:
+    # প্রতিদিন সকাল ৬টা (বাংলাদেশ সময়) এবং প্রতি ৬ ঘণ্টা পর পর রান হবে
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch: # চাইলে যখন ইচ্ছা ম্যানুয়ালি এক ক্লিকে রান করার অপশন
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Worker Script
+        run: python worker.py
