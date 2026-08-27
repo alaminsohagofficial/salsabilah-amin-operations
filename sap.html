@@ -1,220 +1,49 @@
 <!DOCTYPE html>
-<html lang="bn" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.R. Electronics Park | SAP S/4HANA Treasury Gateway v22.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script> tailwind.config = { darkMode: 'class' } </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style> 
-        body { font-family: 'Hind Siliguri', sans-serif; }
-        .modal-active { overflow: hidden; }
-        .table-compact td, .table-compact th { padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
-        @media print {
-            body * { visibility: hidden; }
-            #printableVoucher, #printableVoucher * { visibility: visible; }
-            #printableVoucher { position: absolute; left: 0; top: 0; width: 100%; }
-        }
+    <title>S.R. Electronics Park - SAP FI/AR Reconciliation Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; color: #333; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #003366; }
+        .meta { background: #eef2f7; padding: 15px; border-left: 5px solid #003366; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #003366; color: white; }
+        .status-verified { color: green; font-weight: bold; }
     </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+<body>
+    <div class="container">
+        <h1>S.R. Electronics Park - Treasury Management</h1>
+        <div class="meta">
+            <p><strong>Proprietor:</strong> MD. AL AMIN SOHAG</p>
+            <p><strong>Dealer Code:</strong> 3000002272 (Butterfly Marketing Limited / Minister Myone Group)</p>
+            <p><strong>Audit Tracking Reference:</strong> <code>SR-BML-2026-RTGS-RECON-FINAL</code></p>
+        </div>
 
-    <!-- হেডার নেভিগেশন -->
-    <header class="bg-slate-900 text-white shadow-2xl sticky top-0 z-40 border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 text-slate-950 p-2.5 rounded-xl font-bold text-xl shadow-lg">
-                    <i class="fa-solid fa-store"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold tracking-wide flex items-center gap-2">
-                        S.R. Electronics Park
-                        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold">v22.0 Production</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">প্রোপ্রাইটর: MD. AL AMIN SOHAG | Butterfly Marketing Ltd. অনুমোদিত ডিলার</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-2">
-                <span class="hidden md:flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-emerald-400 text-[11px] px-2.5 py-1 rounded font-mono">
-                    <i class="fa-solid fa-circle-check text-[9px] text-emerald-400 animate-pulse"></i> compile_pdfs.yml: Pass
-                </span>
-                <button onclick="triggerEmailDispatch()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
-                    <i class="fa-solid fa-paper-plane"></i> <span class="hidden xl:inline">send_email.py</span>
-                </button>
-                <button onclick="toggleTheme()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs p-2 rounded-lg transition">
-                    <i class="fa-solid fa-moon text-sm" id="themeIcon"></i>
-                </button>
-                <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow transition font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-file-excel"></i> এক্সপোর্ট (CSV)
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- ট্র্যাকিং ও রেফারেন্স বার -->
-    <div class="bg-slate-950 text-slate-300 text-[11px] font-mono py-1.5 px-4 border-b border-slate-800 flex flex-wrap justify-between items-center gap-2">
-        <div class="flex items-center gap-4">
-            <span class="text-amber-400 font-bold"><i class="fa-solid fa-file-contract"></i> ACTIVE AUDIT REF:</span>
-            <span class="text-slate-200 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">SR-BML-2026-RTGS-RECON-FINAL</span>
-            <span class="text-slate-600">|</span>
-            <span class="text-cyan-400 font-bold">PURCHASE ORDER:</span>
-            <span class="text-slate-200 font-bold">#e000010109 (৳14.3M ECO+ & Butterfly Refrigerator Units)</span>
-        </div>
-        <div class="flex items-center gap-2 text-emerald-400 font-bold">
-            <i class="fa-solid fa-server"></i> ERP System: S/4HANA Connected
-        </div>
+        <h2>Active Financial & Procurement Ledger</h2>
+        <table>
+            <tr>
+                <th>Reference ID</th>
+                <th>Category / Details</th>
+                <th>Amount (BDT)</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>PO-#e000010109</td>
+                <td>ECO+ & Butterfly Refrigerator Units (High-Value Procurement)</td>
+                <td>৳1,43,00,000/-</td>
+                <td class="status-verified">Verified & Synced</td>
+            </tr>
+            <tr>
+                <td>DBBL-HAT-2026-08</td>
+                <td>DBBL Hatboaliya Branch Deposit Clearance</td>
+                <td>৳3,00,000/-</td>
+                <td class="status-verified">Cleared in SAP FI/AR</td>
+            </tr>
+        </table>
     </div>
-
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 flex-grow w-full">
-
-        <!-- সামারি মেট্রিক্স -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                <div class="space-y-1">
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">চলতি অর্ডার ভ্যালু (PO)</p>
-                    <p class="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">৳ ১,৪৩,০০,০০০</p>
-                    <p class="text-[10px] text-slate-400">PO #e000010109 | Refrigerator Shipment</p>
-                </div>
-                <div class="bg-cyan-100 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400 p-3.5 rounded-2xl"><i class="fa-solid fa-boxes-packing text-xl"></i></div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                <div class="space-y-1">
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">RTGS / EFT ক্লিয়ার্ড মোট</p>
-                    <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">৳ ১,৩২,৬৯,৫৪৫</p>
-                    <p class="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium"><i class="fa-solid fa-circle-check"></i> Butterfly Corporate Account Post</p>
-                </div>
-                <div class="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 p-3.5 rounded-2xl"><i class="fa-solid fa-vault text-xl"></i></div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                <div class="space-y-1">
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">পেন্ডিং এজেন্ট ডিপোজিট</p>
-                    <p class="text-2xl font-bold text-amber-600 dark:text-amber-500 font-mono" id="metricPending">৳ ৩,০০,০০০</p>
-                    <p class="text-[10px] text-amber-700 dark:text-amber-400 font-medium">ডাচ বাংলা ব্যাংক লিমিটেড (হাটবোয়ালিয়া শাখা)</p>
-                </div>
-                <div class="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 p-3.5 rounded-2xl"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                <div class="space-y-1">
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">কমপ্লায়েন্স & ট্যাক্স স্ট্যাটাস</p>
-                    <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-1"><i class="fa-solid fa-file-circle-check"></i> Tax Settlement Ready</p>
-                    <p class="text-[10px] text-slate-400">Template: L1 Tax Clearance</p>
-                </div>
-                <div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 p-3.5 rounded-2xl"><i class="fa-solid fa-receipt text-xl"></i></div>
-            </div>
-        </div>
-
-        <!-- মূল লেনদেন রেজিস্টার -->
-        <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
-                <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-slate-500"></i> S.R. Electronics Park - পেমেন্ট ক্লিয়ারেন্স ও অডিট ফাইলস
-                </h3>
-                <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Live Ledger Auto-Reconciled</span>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse" id="paymentTable">
-                    <thead>
-                        <tr class="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">
-                            <th class="py-3 px-4">Entity / Dealer Name</th>
-                            <th class="py-3 px-4">কোম্পানি বিবরণ</th>
-                            <th class="py-3 px-4">ব্যাংক তথ্য / চ্যানেল</th>
-                            <th class="py-3 px-4 text-right">পরিমাণ (BDT)</th>
-                            <th class="py-3 px-4 text-center">SAP Doc No</th>
-                            <th class="py-3 px-4 text-center">স্ট্যাটাস</th>
-                            <th class="py-3 px-4 text-center">অ্যাকশন</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition" id="row-3000002272">
-                            <td class="py-3.5 px-4">
-                                <div class="font-bold text-slate-800 dark:text-slate-100">S.R. Electronics Park</div>
-                                <div class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Dealer Code: 3000002272</div>
-                            </td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-semibold text-slate-700 dark:text-slate-300">Butterfly Marketing Limited</div>
-                                <div class="text-[11px] text-slate-400">Agent Deposit (RTGS/EFT)</div>
-                            </td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-semibold text-slate-700 dark:text-slate-300">Dutch Bangla Bank PLC</div>
-                                <div class="text-[11px] text-slate-500 dark:text-slate-400">Hatboaliya Branch (1051100008683)</div>
-                            </td>
-                            <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-slate-100 text-sm">৳ ৩,০০,০০০.০০</td>
-                            <td class="py-3.5 px-4 text-center font-mono text-slate-600 dark:text-slate-400">5100030102</td>
-                            <td class="py-3.5 px-4 text-center">
-                                <span id="status-3000002272" class="bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-800">Pending Approval</span>
-                            </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <div class="flex items-center justify-center gap-1.5" id="action-group-3000002272">
-                                    <button onclick="approveSingle('3000002272')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-check"></i> ক্লিয়ার</button>
-                                    <button onclick="openVoucherModal()" class="bg-slate-800 text-white text-[11px] px-2 py-1 rounded font-bold transition"><i class="fa-solid fa-file-pdf"></i> JV Audit</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- JV Audit Modal -->
-    <div id="voucherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-200 dark:border-slate-800" id="printableVoucher">
-            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-certificate text-emerald-400"></i> Certified SAP FI Reconciliation Notice</h3>
-                <button onclick="closeVoucherModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-6 space-y-4 text-xs">
-                <div class="border-b pb-3 border-slate-200 dark:border-slate-800 flex justify-between">
-                    <div>
-                        <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100">S.R. Electronics Park</h4>
-                        <p class="text-slate-500">Proprietor: MD. AL AMIN SOHAG</p>
-                    </div>
-                    <div class="text-right font-mono">
-                        <span class="text-slate-400 text-[10px]">AUDIT REF</span>
-                        <p class="font-bold text-emerald-600">SR-BML-2026-RTGS-RECON-FINAL</p>
-                    </div>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
-                    <p class="text-slate-500 text-[10px] mb-1">PURCHASE ORDER WORKFLOW</p>
-                    <p class="font-bold text-slate-800 dark:text-slate-200">PO #e000010109 - ৳1.43 Crore ECO+ & Butterfly Refrigerators</p>
-                </div>
-            </div>
-            <div class="bg-slate-100 dark:bg-slate-800 px-6 py-3 flex justify-between items-center">
-                <button onclick="window.print()" class="bg-slate-800 text-white text-xs px-3 py-1.5 rounded font-bold"><i class="fa-solid fa-print"></i> প্রিন্ট অডিট ভাউচার</button>
-                <button onclick="closeVoucherModal()" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs px-3 py-1.5 rounded font-bold">বন্ধ করুন</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- টোস্ট নোটিফিকেশন -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl text-xs flex items-center gap-3 opacity-0 transition-opacity duration-300 pointer-events-none z-50">
-        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
-        <span id="toastMsg">v22.0 পোর্টাল সিঙ্কড</span>
-    </div>
-
-    <script>
-        function toggleTheme() { document.documentElement.classList.toggle('dark'); }
-        function openVoucherModal() { document.getElementById('voucherModal').classList.remove('hidden'); }
-        function closeVoucherModal() { document.getElementById('voucherModal').classList.add('hidden'); }
-        function triggerEmailDispatch() { showToast("scripts/send_email.py সক্রিয় করা হয়েছে। ইমেইল প্রেরিত হচ্ছে...", "info"); }
-        function approveSingle(id) {
-            document.getElementById('status-' + id).innerText = "PAID & POSTED";
-            document.getElementById('status-' + id).className = "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800";
-            showToast("S.R. Electronics Park এর পেমেন্ট SAP FI এ পোস্টেড করা হয়েছে!", "success");
-        }
-        function exportToCSV() { showToast("CSV রিপোট ডাউনলোড করা হয়েছে।", "success"); }
-        function showToast(msg, type) {
-            let t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => t.classList.add('opacity-0', 'pointer-events-none'), 3000);
-        }
-    </script>
 </body>
 </html>
