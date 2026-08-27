@@ -1,0 +1,20 @@
+{
+  "entity": "SALSABILAH AMIN LIMITED",
+  "proprietor": "MD. AL AMIN SOHAG",
+  "currency": "BDT",
+  "mhpil_settlement": {
+    "dealer_code": "002905",
+    "sap_doc_cleared": "5100029481",
+    "total_inflows": 39195000.00,
+    "total_debits": 8795000.00,
+    "net_surplus": 33056297.00,
+    "dispute_status": "CLEARED"
+  },
+  "bml_settlement": {
+    "account_code": "3000002272",
+    "memo_ref": "BML/TRS/2026/08/3000002272",
+    "allocated_funds": 31429000.00,
+    "active_balance": -209.00,
+    "credit_status": "RELEASED"
+  }
+}
