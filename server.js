@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-// Master Financial Ledger State for S.R. Electronics Park
 const treasuryData = {
   business_name: "S.R. Electronics Park",
   proprietor: "MD. AL AMIN SOHAG",
@@ -28,15 +27,10 @@ const treasuryData = {
   }
 };
 
-// API: Get Complete Treasury & Ledger Status for S.R. Electronics Park
 app.get('/api/treasury/status', (req, res) => {
-  res.json({
-    success: true,
-    data: treasuryData
-  });
+  res.json({ success: true, data: treasuryData });
 });
 
-// API: Process Product Procurement against Cleared Funds & Correct Dealer Codes
 app.post('/api/procurement/order', (req, res) => {
   const { principal, amount, itemDetails } = req.body;
 
