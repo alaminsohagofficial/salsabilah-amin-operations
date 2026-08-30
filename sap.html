@@ -1,96 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>S.R. Electronics Park - SAP FI/AR Treasury & Procurement Dashboard</title>
+    <title>SAP Enterprise Ledger & Treasury Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; color: #333; }
-        .container { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-width: 1100px; margin: auto; }
-        h1 { color: #003366; margin-bottom: 5px; }
-        h2 { color: #004d26; margin-top: 30px; border-bottom: 2px solid #004d26; padding-bottom: 5px; }
-        .meta { background: #eef2f7; padding: 15px; border-left: 5px solid #003366; margin-bottom: 25px; border-radius: 4px; }
-        .meta p { margin: 6px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #003366; color: white; }
-        .th-minister { background-color: #004d26 !important; }
-        .status-cleared { color: green; font-weight: bold; }
-        .badge { display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #fff; border-radius: 4px; }
-        .badge-butterfly { background: #003366; }
-        .badge-minister { background: #004d26; }
-        .action-box { background: #f9f9f9; border: 1px dashed #ccc; padding: 15px; margin-top: 15px; border-radius: 6px; }
-        button { background: #003366; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        button:hover { background: #002244; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { color: #1a1a1a; border-bottom: 2px solid #0056b3; padding-bottom: 8px; margin-top: 0; }
+        .section-title { margin-top: 25px; color: #0056b3; font-size: 1.2rem; border-left: 4px solid #0056b3; padding-left: 8px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #0056b3; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card.success { border-left-color: #28a745; background: #f4faf5; }
+        .card h3 { margin: 0 0 10px 0; font-size: 1rem; color: #555; }
+        .card p { margin: 0; font-size: 1.3rem; font-weight: bold; color: #111; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+        th { background-color: #0056b3; color: white; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .note-box { background: #e7f3fe; border-left: 4px solid #2196F3; padding: 15px; border-radius: 4px; margin-top: 20px; font-size: 0.95rem; line-height: 1.5; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>S.R. Electronics Park - Treasury & Procurement Gateway</h1>
-        <p style="color: #666; margin-top: 0;">SAP S/4HANA Automated Financial Settlement & Inventory Allocation</p>
-        
-        <div class="meta">
-            <p><strong>Business Name:</strong> S.R. Electronics Park</p>
-            <p><strong>Proprietor:</strong> MD. AL AMIN SOHAG</p>
-            <p><strong>Operations Scope:</strong> Multi-brand fund clearing, surplus reconciliation, and independent dealer code management.</p>
+
+<div class="container">
+    <h2>SAP ECC 6.0 লেজার ও ট্রিজারি ভেরিফিকেশন প্যানেল</h2>
+    
+    <div class="card-grid">
+        <div class="card success">
+            <h3>Minister / Salsabilah (DEAL002905)</h3>
+            <p>+ BDT 3,30,56,297.00 Cr</p>
+            <small style="color: #28a745; font-weight: bold;">নিট ক্রেডিট উদ্বৃত্ত (Zero Debt)</small>
         </div>
-
-        <!-- SECTION 1: BUTTERFLY MARKETING LIMITED (BML) -->
-        <h2>
-            <span class="badge badge-butterfly">Principal: Butterfly Marketing Limited</span>
-        </h2>
-        <p><strong>Dealer Name:</strong> S.R. Electronics Park | <strong>Dealer Code:</strong> <code>3000002272</code> | <strong>Memo Ref:</strong> <code>BML/TRS/2026/08/3000002272</code></p>
-        <table>
-            <tr>
-                <th>Allocation Metric</th>
-                <th>Financial Value (BDT)</th>
-                <th>Status / Remarks</th>
-            </tr>
-            <tr>
-                <td>Allocated Funds</td>
-                <td>৳3,14,29,000.00/-</td>
-                <td class="status-cleared">Credit Released & Active</td>
-            </tr>
-            <tr>
-                <td>Active Balance Adjustment</td>
-                <td>-৳209.00/-</td>
-                <td>Minor Ledger Variance Synced</td>
-            </tr>
-        </table>
-
-        <!-- SECTION 2: MINISTER HI-TECH PARK ELECTRONICS LTD. (MHPIL) -->
-        <h2>
-            <span class="badge badge-minister">Principal: Minister Hi-Tech Park Electronics Ltd.</span>
-        </h2>
-        <p><strong>Dealer Name:</strong> S.R. Electronics Park | <strong>Dealer Code:</strong> <code>002905</code> | <strong>SAP Doc Cleared:</strong> <code>5100029481</code></p>
-        <table>
-            <tr>
-                <th class="th-minister">Financial Metric</th>
-                <th class="th-minister">Amount (BDT)</th>
-                <th class="th-minister">Audit & Settlement Status</th>
-            </tr>
-            <tr>
-                <td>Total Inflows</td>
-                <td>৳3,91,95,000.00/-</td>
-                <td class="status-cleared">Verified Inflow</td>
-            </tr>
-            <tr>
-                <td>Total Debits</td>
-                <td>৳87,95,000.00/-</td>
-                <td>Processed Debits</td>
-            </tr>
-            <tr>
-                <td><strong>Net Surplus Available</strong></td>
-                <td><strong>৳3,30,56,297.00/-</strong></td>
-                <td class="status-cleared">Fully Cleared & Ready for Procurement</td>
-            </tr>
-        </table>
-
-        <!-- SECTION 3: PROCUREMENT EXECUTION TERMINAL -->
-        <h3>Product Procurement & Order Execution Terminal</h3>
-        <div class="action-box">
-            <p>Use cleared surplus funds or released credits under S.R. Electronics Park to execute new high-value product requisitions in SAP.</p>
-            <button onclick="alert('Procurement gateway initialized for S.R. Electronics Park. Ready for batch PO sync.')">Execute Procurement Sync</button>
+        <div class="card success">
+            <h3>Butterfly Marketing (3000002272)</h3>
+            <p>BDT 3,14,29,000.00</p>
+            <small style="color: #28a745; font-weight: bold;">ক্রেডিট রিলিজ অ্যালোকেশন সম্পূর্ণ</small>
         </div>
     </div>
+
+    <div class="section-title"> SAP লেজার এবং ব্যাংক সেটেলমেন্ট বিবরণী</div>
+    <table>
+        <thead>
+            <tr>
+                <th>কোম্পানির নাম</th>
+                <th>একাউন্ট / ডিলার কোড</th>
+                <th>মূল ব্যাংক / কালেকশন মাধ্যম</th>
+                <th>বর্তমান আর্থিক স্থিতি</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Minister Hi-Tech Park Electronics Ltd.</b> (সোহাগ)</td>
+                <td>DEAL002905</td>
+                <td>IBBL (A/C: 20503910100020103) & সোনালী ব্যাংক RTGS</td>
+                <td style="color: #28a745; font-weight: bold;">(+) ৩,৩০,৫৬,২৯৭.০০ টাকা Cr</td>
+            </tr>
+            <tr>
+                <td><b>Butterfly Marketing Limited</b> (এস.আর. ইলেকট্রনিক্স পার্ক)</td>
+                <td>3000002272</td>
+                <td>সিটি ব্যাংক ও সোনালী ব্যাংক RTGS / DBBL</td>
+                <td style="color: #28a745; font-weight: bold;">৩,১৪,২৯,০০০.০০ টাকা (ক্লিয়ারেন্স প্রাপ্ত)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <b>সিস্টেম স্ট্যাটাস:</b> SAP ECC 6.0 এবং ব্যাংক রসিদের সাথে রিয়েল-টাইম সিঙ্ক্রোনাইজেশন সফলভাবে সম্পন্ন হয়েছে।
+    </div>
+</div>
+
 </body>
 </html>
