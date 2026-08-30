@@ -3,9 +3,6 @@ import sys
 import requests
 
 def fetch_api_data():
-    """
-    Fetches live ledger & clearance data from SAP ERP / Banking API using GitHub Secrets.
-    """
     api_url = os.getenv("ERP_API_URL")
     api_token = os.getenv("ERP_API_TOKEN")
 
@@ -31,10 +28,29 @@ def fetch_api_data():
 
     return None
 
+def process_brand_ledgers(data):
+    if not data or "entries" not in data:
+        print("ℹ️ No entries found for brand segregation. Using local fallbacks.")
+        return
+
+    minister_count = 0
+    butterfly_count = 0
+
+    for entry in data.get("entries", []):
+        dealer_code = entry.get("dealer_code")
+        if dealer_code == "002905":
+            minister_count += 1
+        elif dealer_code == "3000002272":
+            butterfly_count += 1
+
+    print(f"📊 Segregation Complete -> Minister (002905): {minister_count} records | Butterfly (3000002272): {butterfly_count} records")
+
 def main():
-    print("🚀 SAP & Banking API Sync Engine Initialized.")
+    print("🚀 S.R. Electronics Park - SAP & Banking API Sync Engine Initialized.")
     data = fetch_api_data()
-    print("✅ Sync Process Completed. Ready for LaTeX Compilation.")
+    if data:
+        process_brand_ledgers(data)
+    print("✅ Sync Process Completed. Ready for LaTeX / PDF Compilation.")
 
 if __name__ == "__main__":
     main()
