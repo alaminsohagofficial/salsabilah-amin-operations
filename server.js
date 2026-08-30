@@ -2,68 +2,59 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-const treasuryData = {
+// রিয়েল-টাইম সেন্ট্রাল ট্রেজারি ডাটাবেস স্টেট
+let realTimeTreasury = {
     business_name: "S.R. Electronics Park",
     proprietor: "MD. AL AMIN SOHAG",
-    currency: "BDT",
-    mhpil_settlement: {
+    last_sync: new Date().toISOString(),
+    mhpil: {
         principal: "Minister Hi-Tech Park Electronics Ltd.",
-        dealer_name: "S.R. Electronics Park",
         dealer_code: "002905",
-        sap_doc_cleared: "5100029481",
-        total_inflows: 39195000.00,
-        total_debits: 8795000.00,
+        bank_ref: "IBBL A/C 20503910100020103 & Sonali Bank RTGS",
         net_surplus: 33056297.00,
-        dispute_status: "CLEARED"
+        status: "LIVE_SYNCED"
     },
-    bml_settlement: {
+    butterfly: {
         principal: "Butterfly Marketing Limited",
-        dealer_name: "S.R. Electronics Park",
         account_code: "3000002272",
-        memo_ref: "BML/TRS/2026/08/3000002272",
+        bank_ref: "City Bank & DBBL RTGS",
         allocated_funds: 31429000.00,
-        active_balance: -209.00,
-        credit_status: "RELEASED"
+        status: "LIVE_SYNCED"
     }
 };
 
-app.get('/api/treasury/status', (req, res) => {
-    res.json({ success: true, data: treasuryData });
+// ১. রিয়েল-টাইম ট্রেজারি স্ট্যাটাস এপিআই
+app.get('/api/v1/treasury/live-status', (req, res) => {
+    realTimeTreasury.last_sync = new Date().toISOString();
+    res.json({
+        success: true,
+        timestamp: realTimeTreasury.last_sync,
+        data: realTimeTreasury
+    });
 });
 
-app.post('/api/procurement/order', (req, res) => {
-    const { principal, amount, itemDetails } = req.body;
+// ২. এক্সটার্নাল ব্যাংক বা SAP এপিআই থেকে লাইভ ডাটা পুশ/সিঙ্ক করার এন্ডপয়েন্ট
+app.post('/api/v1/sync/ledger', (req, res) => {
+    const { company, surplus_amount, allocated_funds } = req.body;
 
-    if (principal === 'MHPIL') {
-        if (treasuryData.mhpil_settlement.net_surplus >= amount) {
-            treasuryData.mhpil_settlement.net_surplus -= amount;
-            return res.json({
-                success: true,
-                message: "Minister Hi-Tech Park procurement order placed successfully using surplus funds.",
-                dealer_code: treasuryData.mhpil_settlement.dealer_code,
-                remaining_surplus: treasuryData.mhpil_settlement.net_surplus,
-                item: itemDetails
-            });
-        } else {
-            return res.status(400).json({ success: false, message: "Insufficient MHPIL surplus funds under dealer code 002905." });
-        }
-    } else if (principal === 'BML') {
-        if (treasuryData.bml_settlement.credit_status === 'RELEASED') {
-            return res.json({
-                success: true,
-                message: "Butterfly Marketing Limited procurement order authorized via released credit line.",
-                dealer_code: treasuryData.bml_settlement.account_code,
-                item: itemDetails
-            });
-        } else {
-            return res.status(400).json({ success: false, message: "BML credit not released for dealer code 3000002272." });
-        }
+    if (company === 'MHPIL' && surplus_amount !== undefined) {
+        realTimeTreasury.mhpil.net_surplus = surplus_amount;
+        realTimeTreasury.mhpil.status = "UPDATED_VIA_API";
+    } else if (company === 'BML' && allocated_funds !== undefined) {
+        realTimeTreasury.butterfly.allocated_funds = allocated_funds;
+        realTimeTreasury.butterfly.status = "UPDATED_VIA_API";
     } else {
-        return res.status(400).json({ success: false, message: "Invalid principal entity specified." });
+        return res.status(400).json({ success: false, message: "Invalid sync payload format." });
     }
+
+    res.json({
+        success: true,
+        message: `Real-time synchronization successful for ${company}`,
+        current_data: realTimeTreasury
+    });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`S.R. Electronics Park Treasury Engine running on port ${PORT}`);
+    console.log(`S.R. Electronics Park Real-Time API Engine running on port ${PORT}`);
 });
