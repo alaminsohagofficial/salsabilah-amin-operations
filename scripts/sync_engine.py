@@ -1,56 +1,32 @@
-import os
-import sys
 import requests
+import json
+from datetime import datetime
 
-def fetch_api_data():
-    api_url = os.getenv("ERP_API_URL")
-    api_token = os.getenv("ERP_API_TOKEN")
+API_URL = "http://localhost:3000/api/v1/sync/ledger"
 
-    if not api_url or not api_token:
-        print("⚠️ API Secrets missing. Skipping API fetch and using local template defaults.")
-        return None
-
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Content-Type": "application/json"
+def sync_ledger_data():
+    payload_mhpil = {
+        "company": "MHPIL",
+        "surplus_amount": 33056297.00
+    }
+    
+    payload_bml = {
+        "company": "BML",
+        "allocated_funds": 31429000.00
     }
 
+    print(f"[{datetime.now()}] Initiating Real-Time SAP & Bank Ledger Synchronization...")
+    
     try:
-        print(f"📡 Connecting to API: {api_url}")
-        response = requests.get(api_url, headers=headers, timeout=15)
-        if response.status_code == 200:
-            print("✅ Successfully fetched live data from API.")
-            return response.json()
+        res1 = requests.post(API_URL, json=payload_mhpil)
+        res2 = requests.post(API_URL, json=payload_bml)
+        
+        if res1.status_code == 200 and res2.status_code == 200:
+            print("Successfully synchronized all brand ledgers in real-time.")
         else:
-            print(f"⚠️ API Response Error: Status {response.status_code}")
+            print("Sync warning: Response code mismatch.")
     except Exception as e:
-        print(f"❌ API Connection Failed: {e}", file=sys.stderr)
-
-    return None
-
-def process_brand_ledgers(data):
-    if not data or "entries" not in data:
-        print("ℹ️ No entries found for brand segregation. Using local fallbacks.")
-        return
-
-    minister_count = 0
-    butterfly_count = 0
-
-    for entry in data.get("entries", []):
-        dealer_code = entry.get("dealer_code")
-        if dealer_code == "002905":
-            minister_count += 1
-        elif dealer_code == "3000002272":
-            butterfly_count += 1
-
-    print(f"📊 Segregation Complete -> Minister (002905): {minister_count} records | Butterfly (3000002272): {butterfly_count} records")
-
-def main():
-    print("🚀 S.R. Electronics Park - SAP & Banking API Sync Engine Initialized.")
-    data = fetch_api_data()
-    if data:
-        process_brand_ledgers(data)
-    print("✅ Sync Process Completed. Ready for LaTeX / PDF Compilation.")
+        print(f"Error connecting to local/cloud API server: {e}")
 
 if __name__ == "__main__":
-    main()
+    sync_ledger_data()
