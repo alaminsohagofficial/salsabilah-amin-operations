@@ -4,26 +4,38 @@
     <meta charset="UTF-8">
     <title>S.R. Electronics Park - SAP FI/AR Reconciliation Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; color: #333; }
-        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { color: #003366; }
-        .meta { background: #eef2f7; padding: 15px; border-left: 5px solid #003366; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; color: #333; }
+        .container { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        h1 { color: #003366; margin-bottom: 5px; }
+        h2 { color: #004d26; margin-top: 30px; border-bottom: 2px solid #004d26; padding-bottom: 5px; }
+        .meta { background: #eef2f7; padding: 15px; border-left: 5px solid #003366; margin-bottom: 25px; border-radius: 4px; }
+        .meta p { margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
         th { background-color: #003366; color: white; }
+        .th-minister { background-color: #004d26 !important; }
         .status-verified { color: green; font-weight: bold; }
+        .status-pending { color: #d9534f; font-weight: bold; }
+        .badge { display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #fff; background: #6c757d; border-radius: 4px; }
+        .badge-butterfly { background: #003366; }
+        .badge-minister { background: #004d26; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>S.R. Electronics Park - Treasury Management</h1>
+        <p style="color: #666; margin-top: 0;">SAP S/4HANA Automated Financial & AR Reconciliation Gateway</p>
+        
         <div class="meta">
             <p><strong>Proprietor:</strong> MD. AL AMIN SOHAG</p>
-            <p><strong>Dealer Code:</strong> 3000002272 (Butterfly Marketing Limited / Minister Myone Group)</p>
-            <p><strong>Audit Tracking Reference:</strong> <code>SR-BML-2026-RTGS-RECON-FINAL</code></p>
+            <p><strong>Operations Scope:</strong> High-value procurement settlement, RTGS/EFT fund reconciliation, and independent brand ledger posting.</p>
         </div>
 
-        <h2>Active Financial & Procurement Ledger</h2>
+        <!-- SECTION 1: BUTTERFLY MARKETING LIMITED -->
+        <h2>
+            <span class="badge badge-butterfly">Principal: Butterfly Marketing Limited</span>
+        </h2>
+        <p><strong>Authorized Dealer Code:</strong> <code>3000002272</code> | <strong>Audit Ref:</strong> <code>SR-BML-2026-RTGS-RECON-FINAL</code></p>
         <table>
             <tr>
                 <th>Reference ID</th>
@@ -35,13 +47,45 @@
                 <td>PO-#e000010109</td>
                 <td>ECO+ & Butterfly Refrigerator Units (High-Value Procurement)</td>
                 <td>৳1,43,00,000/-</td>
-                <td class="status-verified">Verified & Synced</td>
+                <td class="status-verified">Verified & Synced in SAP</td>
             </tr>
             <tr>
                 <td>DBBL-HAT-2026-08</td>
                 <td>DBBL Hatboaliya Branch Deposit Clearance</td>
                 <td>৳3,00,000/-</td>
                 <td class="status-verified">Cleared in SAP FI/AR</td>
+            </tr>
+        </table>
+
+        <!-- SECTION 2: MINISTER HI-TECH PARK ELECTRONICS LTD. -->
+        <h2>
+            <span class="badge badge-minister">Principal: Minister Hi-Tech Park Electronics Ltd.</span>
+        </h2>
+        <p><strong>Authorized Dealer Code:</strong> <code>DEAL002905</code> | <strong>Entity Ledger Profile:</strong> Corporate Manufacturing, Treasury Transfer & Compliance Management</p>
+        <table>
+            <tr>
+                <th class="th-minister">Reference ID</th>
+                <th class="th-minister">Category / Details</th>
+                <th class="th-minister">Amount (BDT)</th>
+                <th class="th-minister">Status</th>
+            </tr>
+            <tr>
+                <td>MHP-SET-2026-0802</td>
+                <td>Direct Credit Settlement & Treasury Remittance</td>
+                <td>৳1,32,69,545/-</td>
+                <td class="status-verified">Credit Confirmed (Aug 2, 2026)</td>
+            </tr>
+            <tr>
+                <td>MHP-SUP-2026-07</td>
+                <td>Google TV & Component Supplier Payment Settlements</td>
+                <td>৳19,20,000/-</td>
+                <td class="status-verified">Settled & Reconciled</td>
+            </tr>
+            <tr>
+                <td>MHP-COMP-2026</td>
+                <td>Hardware Certification & Firmware Compliance Escrow</td>
+                <td>৳2,00,00,000/-</td>
+                <td class="status-pending">Ledger Sync & Reconciliation Active</td>
             </tr>
         </table>
     </div>
