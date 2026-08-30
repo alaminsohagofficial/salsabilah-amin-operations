@@ -5,12 +5,12 @@ import requests
 def send_sms(phone_number: str, message: str, principal: str = "SR_PARK") -> bool:
     """
     Sends an SMS notification using environment variables for security.
-    Supports brand-specific sender ID configuration.
+    Supports brand-specific sender ID configuration for S.R. Electronics Park.
     """
     api_url = os.getenv("SMS_GATEWAY_URL")
     api_key = os.getenv("SMS_GATEWAY_API_KEY")
     
-    # Dynamic Sender ID based on principal/brand if needed
+    # Dynamic Sender ID based on principal/brand
     if principal == "MINISTER":
         sender_id = os.getenv("MINISTER_SENDER_ID", "MINISTER")
     elif principal == "BUTTERFLY":
@@ -39,7 +39,17 @@ def send_sms(phone_number: str, message: str, principal: str = "SR_PARK") -> boo
         return False
 
 if __name__ == "__main__":
-    # Test Trigger for S.R. Electronics Park
-    recipient = "+8801700000000"
-    sms_body = "S.R. Electronics Park: Treasury & SAP Ledger Reconciliation Test Alert."
-    send_sms(recipient, sms_body, principal="SR_PARK")
+    print("S.R. Electronics Park - SMS Gateway Trigger Initialized.")
+    
+    # Command line argument handling for GitHub Actions / Automation triggers
+    # Usage: python scripts/sms_gateway_trigger.py <phone> <message> <principal>
+    if len(sys.argv) >= 3:
+        target_phone = sys.argv[1]
+        msg_content = sys.argv[2]
+        brand_principal = sys.argv[3] if len(sys.argv) > 3 else "SR_PARK"
+        send_sms(target_phone, msg_content, brand_principal)
+    else:
+        # Default Test Trigger
+        recipient = "+8801700000000"
+        sms_body = "S.R. Electronics Park: Treasury & SAP Ledger Reconciliation Trigger Test."
+        # send_sms(recipient, sms_body, principal="SR_PARK")
