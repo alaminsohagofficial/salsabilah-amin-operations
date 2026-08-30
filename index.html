@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Enterprise Financial Master Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { color: #1a1a1a; border-bottom: 2px solid #0056b3; padding-bottom: 8px; margin-top: 0; }
+        .section-title { margin-top: 25px; color: #0056b3; font-size: 1.2rem; border-left: 4px solid #0056b3; padding-left: 8px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #0056b3; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card.success { border-left-color: #28a745; background: #f4faf5; }
+        .card h3 { margin: 0 0 10px 0; font-size: 1rem; color: #555; }
+        .card p { margin: 0; font-size: 1.3rem; font-weight: bold; color: #111; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+        th { background-color: #0056b3; color: white; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .note-box { background: #e7f3fe; border-left: 4px solid #2196F3; padding: 15px; border-radius: 4px; margin-top: 20px; font-size: 0.95rem; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>কেন্দ্রীয় আর্থিক নিয়ন্ত্রণ ড্যাশবোর্ড (অফিশিয়াল ব্যাংক ও SAP ভেরিফাইড)</h2>
+    
+    <div class="card-grid">
+        <div class="card success">
+            <h3>Minister / Salsabilah (DEAL002905)</h3>
+            <p>+ BDT 3,30,56,297.00 Cr</p>
+            <small style="color: #28a745; font-weight: bold;">নিট ক্রেডিট উদ্বৃত্ত (Zero Debt)</small>
+        </div>
+        <div class="card success">
+            <h3>Butterfly Marketing (3000002272)</h3>
+            <p>BDT 3,14,29,000.00</p>
+            <small style="color: #28a745; font-weight: bold;">ক্রেডিট রিলিজ অ্যালোকেশন সম্পূর্ণ</small>
+        </div>
+    </div>
+
+    <div class="section-title">কোম্পানি ভিত্তিক হিসাবের সারসংক্ষেপ</div>
+    <table>
+        <thead>
+            <tr>
+                <th>কোম্পানির নাম</th>
+                <th>একাউন্ট / ডিলার কোড</th>
+                <th>মূল ব্যাংক / কালেকশন মাধ্যম</th>
+                <th>বর্তমান আর্থিক স্থিতি</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Minister Hi-Tech Park Electronics Ltd.</b> (সোহাগ)</td>
+                <td>DEAL002905</td>
+                <td>IBBL (A/C: 20503910100020103) & সোনালী ব্যাংক RTGS</td>
+                <td style="color: #28a745; font-weight: bold;">(+) ৩,৩০,৫৬,২৯৭.০০ টাকা Cr</td>
+            </tr>
+            <tr>
+                <td><b>Butterfly Marketing Limited</b> (এস.আর. ইলেকট্রনিক্স পার্ক)</td>
+                <td>3000002272</td>
+                <td>সিটি ব্যাংক ও সোনালী ব্যাংক RTGS / DBBL</td>
+                <td style="color: #28a745; font-weight: bold;">৩,১৪,২৯,০০০.০০ টাকা (ক্লিয়ারেন্স প্রাপ্ত)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <b>গুরুত্বপূর্ণ নোট:</b> থার্ড-পার্টি সফটওয়্যারের হিসাব পুরোপুরি বাদ দেওয়া হয়েছে। বর্তমান ড্যাশবোর্ডের ডেটা সরাসরি ব্যাংক রসিদ, গুগল আয়ারল্যান্ড বৈদেশিক রেমিট্যান্স এবং SAP ECC 6.0 লেজারের ওপর ভিত্তি করে তৈরি, যা শতভাগ নির্ভুল ও নিরাপদ।
+    </div>
+</div>
+
+</body>
+</html>
