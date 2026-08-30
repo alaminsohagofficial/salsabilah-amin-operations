@@ -3,10 +3,6 @@ import json
 import sys
 
 def parse_sap_ledger(ledger_file_path: str):
-    """
-    Parses and reconciles SAP OData/REST accounting ledger exports 
-    separately for S.R. Electronics Park (Minister & Butterfly Accounts).
-    """
     if not os.path.exists(ledger_file_path):
         print(f"Error: Ledger file '{ledger_file_path}' not found.", file=sys.stderr)
         return None
@@ -23,11 +19,9 @@ def parse_sap_ledger(ledger_file_path: str):
         for entry in data.get("entries", []):
             dealer_code = entry.get("dealer_code")
             
-            # Status update for pending entries
             if entry.get("status") == "PENDING":
                 entry["status"] = "RECONCILED"
 
-            # Segregate based on approved Dealer Codes
             if dealer_code == "002905":
                 entry["principal"] = "Minister Hi-Tech Park Electronics Ltd."
                 minister_entries.append(entry)
@@ -52,7 +46,5 @@ def parse_sap_ledger(ledger_file_path: str):
 
 if __name__ == "__main__":
     print("S.R. Electronics Park - SAP Ledger Reconciliation Engine Initialized.")
-    
-    # If running directly, you can pass a sample json file path here if needed
     if len(sys.argv) > 1:
         parse_sap_ledger(sys.argv[1])
