@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>S.R. Electronics Park - SAP FI/AR Reconciliation Dashboard</title>
+    <title>S.R. Electronics Park - SAP FI/AR Treasury & Procurement Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; color: #333; }
-        .container { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .container { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-width: 1100px; margin: auto; }
         h1 { color: #003366; margin-bottom: 5px; }
         h2 { color: #004d26; margin-top: 30px; border-bottom: 2px solid #004d26; padding-bottom: 5px; }
         .meta { background: #eef2f7; padding: 15px; border-left: 5px solid #003366; margin-bottom: 25px; border-radius: 4px; }
@@ -14,80 +14,83 @@
         th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
         th { background-color: #003366; color: white; }
         .th-minister { background-color: #004d26 !important; }
-        .status-verified { color: green; font-weight: bold; }
-        .status-pending { color: #d9534f; font-weight: bold; }
-        .badge { display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #fff; background: #6c757d; border-radius: 4px; }
+        .status-cleared { color: green; font-weight: bold; }
+        .badge { display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #fff; border-radius: 4px; }
         .badge-butterfly { background: #003366; }
         .badge-minister { background: #004d26; }
+        .action-box { background: #f9f9f9; border: 1px dashed #ccc; padding: 15px; margin-top: 15px; border-radius: 6px; }
+        button { background: #003366; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        button:hover { background: #002244; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>S.R. Electronics Park - Treasury Management</h1>
-        <p style="color: #666; margin-top: 0;">SAP S/4HANA Automated Financial & AR Reconciliation Gateway</p>
+        <h1>S.R. Electronics Park - Treasury & Procurement Gateway</h1>
+        <p style="color: #666; margin-top: 0;">SAP S/4HANA Automated Financial Settlement & Inventory Allocation</p>
         
         <div class="meta">
+            <p><strong>Business Name:</strong> S.R. Electronics Park</p>
             <p><strong>Proprietor:</strong> MD. AL AMIN SOHAG</p>
-            <p><strong>Operations Scope:</strong> High-value procurement settlement, RTGS/EFT fund reconciliation, and independent brand ledger posting.</p>
+            <p><strong>Operations Scope:</strong> Multi-brand fund clearing, surplus reconciliation, and independent dealer code management.</p>
         </div>
 
-        <!-- SECTION 1: BUTTERFLY MARKETING LIMITED -->
+        <!-- SECTION 1: BUTTERFLY MARKETING LIMITED (BML) -->
         <h2>
             <span class="badge badge-butterfly">Principal: Butterfly Marketing Limited</span>
         </h2>
-        <p><strong>Authorized Dealer Code:</strong> <code>3000002272</code> | <strong>Audit Ref:</strong> <code>SR-BML-2026-RTGS-RECON-FINAL</code></p>
+        <p><strong>Dealer Name:</strong> S.R. Electronics Park | <strong>Dealer Code:</strong> <code>3000002272</code> | <strong>Memo Ref:</strong> <code>BML/TRS/2026/08/3000002272</code></p>
         <table>
             <tr>
-                <th>Reference ID</th>
-                <th>Category / Details</th>
-                <th>Amount (BDT)</th>
-                <th>Status</th>
+                <th>Allocation Metric</th>
+                <th>Financial Value (BDT)</th>
+                <th>Status / Remarks</th>
             </tr>
             <tr>
-                <td>PO-#e000010109</td>
-                <td>ECO+ & Butterfly Refrigerator Units (High-Value Procurement)</td>
-                <td>৳1,43,00,000/-</td>
-                <td class="status-verified">Verified & Synced in SAP</td>
+                <td>Allocated Funds</td>
+                <td>৳3,14,29,000.00/-</td>
+                <td class="status-cleared">Credit Released & Active</td>
             </tr>
             <tr>
-                <td>DBBL-HAT-2026-08</td>
-                <td>DBBL Hatboaliya Branch Deposit Clearance</td>
-                <td>৳3,00,000/-</td>
-                <td class="status-verified">Cleared in SAP FI/AR</td>
+                <td>Active Balance Adjustment</td>
+                <td>-৳209.00/-</td>
+                <td>Minor Ledger Variance Synced</td>
             </tr>
         </table>
 
-        <!-- SECTION 2: MINISTER HI-TECH PARK ELECTRONICS LTD. -->
+        <!-- SECTION 2: MINISTER HI-TECH PARK ELECTRONICS LTD. (MHPIL) -->
         <h2>
             <span class="badge badge-minister">Principal: Minister Hi-Tech Park Electronics Ltd.</span>
         </h2>
-        <p><strong>Authorized Dealer Code:</strong> <code>DEAL002905</code> | <strong>Entity Ledger Profile:</strong> Corporate Manufacturing, Treasury Transfer & Compliance Management</p>
+        <p><strong>Dealer Name:</strong> S.R. Electronics Park | <strong>Dealer Code:</strong> <code>002905</code> | <strong>SAP Doc Cleared:</strong> <code>5100029481</code></p>
         <table>
             <tr>
-                <th class="th-minister">Reference ID</th>
-                <th class="th-minister">Category / Details</th>
+                <th class="th-minister">Financial Metric</th>
                 <th class="th-minister">Amount (BDT)</th>
-                <th class="th-minister">Status</th>
+                <th class="th-minister">Audit & Settlement Status</th>
             </tr>
             <tr>
-                <td>MHP-SET-2026-0802</td>
-                <td>Direct Credit Settlement & Treasury Remittance</td>
-                <td>৳1,32,69,545/-</td>
-                <td class="status-verified">Credit Confirmed (Aug 2, 2026)</td>
+                <td>Total Inflows</td>
+                <td>৳3,91,95,000.00/-</td>
+                <td class="status-cleared">Verified Inflow</td>
             </tr>
             <tr>
-                <td>MHP-SUP-2026-07</td>
-                <td>Google TV & Component Supplier Payment Settlements</td>
-                <td>৳19,20,000/-</td>
-                <td class="status-verified">Settled & Reconciled</td>
+                <td>Total Debits</td>
+                <td>৳87,95,000.00/-</td>
+                <td>Processed Debits</td>
             </tr>
             <tr>
-                <td>MHP-COMP-2026</td>
-                <td>Hardware Certification & Firmware Compliance Escrow</td>
-                <td>৳2,00,00,000/-</td>
-                <td class="status-pending">Ledger Sync & Reconciliation Active</td>
+                <td><strong>Net Surplus Available</strong></td>
+                <td><strong>৳3,30,56,297.00/-</strong></td>
+                <td class="status-cleared">Fully Cleared & Ready for Procurement</td>
             </tr>
         </table>
+
+        <!-- SECTION 3: PROCUREMENT EXECUTION TERMINAL -->
+        <h3>Product Procurement & Order Execution Terminal</h3>
+        <div class="action-box">
+            <p>Use cleared surplus funds or released credits under S.R. Electronics Park to execute new high-value product requisitions in SAP.</p>
+            <button onclick="alert('Procurement gateway initialized for S.R. Electronics Park. Ready for batch PO sync.')">Execute Procurement Sync</button>
+        </div>
     </div>
 </body>
 </html>
