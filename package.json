@@ -1,14 +1,12 @@
 {
   "name": "salsabilah-amin-operations",
   "version": "1.0.0",
-  "description": "Operations, automated document processing, and SAP FI/AR reconciliation for S.R. Electronics Park",
+  "description": "Enterprise Financial Master Dashboard and Treasury Automation for S.R. Electronics Park",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2"
-  },
-  "author": "MD. AL AMIN SOHAG",
-  "license": "ISC"
+  }
 }
