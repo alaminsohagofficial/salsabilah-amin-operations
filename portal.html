@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salsabilah Amin Empires - Live Enterprise Portal & Transaction Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
+    <div>
+        <!-- Top Navigation / Header -->
+        <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 no-print">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-cyan-500/20">
+                        SAE
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-bold tracking-tight text-white">SALSABILAH AMIN EMPIRES & SR ELECTRONICS</h1>
+                        <p class="text-[11px] text-cyan-400 font-mono">Live ERP, SAP FI-BL & Transaction Settlement Portal</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse mr-2"></span> 
+                        <span>SAP ERP & CI/CD Synced</span>
+                    </span>
+                    <button onclick="window.print()" class="text-xs font-medium px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
+                        প্রিন্ট / রিপোর্ট এক্সপোর্ট
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            
+            <!-- Hero Banner -->
+            <section class="rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest font-semibold text-cyan-400 font-mono">Enterprise Control Unit (Ref: SAE-GMR-2026)</span>
+                        <h2 class="text-2xl sm:text-3xl font-bold mt-2 text-white">সঙ্কলিত গ্লোবাল পোর্টফোলিও ও লাইভ ট্রানজাকশন গেটওয়ে</h2>
+                        <p class="text-slate-300 mt-2 text-sm leading-relaxed max-w-2xl">
+                            মিনিস্টার (DEAL002905) ও বাটারফ্লাই (3000002272) ডিলার কোড ভিত্তিক রিয়েল-টাইম ফান্ড সেটেলমেন্ট ও ইনভয়েস ম্যানেজমেন্ট।
+                        </p>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl text-xs font-mono space-y-1.5 w-full md:w-auto">
+                        <div class="text-slate-400">Total Net-Worth Valuation:</div>
+                        <div class="text-lg font-bold text-emerald-400">৳ ২,২২,০৪,৪৩,৬১,৪২১.৬০</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transaction Module -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 rounded-2xl bg-slate-900/80 border border-slate-800 p-6 shadow-xl space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <h3 class="font-bold text-white text-base flex items-center gap-2">
+                            নতুন ফান্ড ট্রান্সফার ও গেটওয়ে সেটেলমেন্ট
+                        </h3>
+                        <span class="text-xs font-mono bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded border border-cyan-500/20">SAP FI-BL</span>
+                    </div>
+
+                    <form id="transaction-form" onsubmit="processTransaction(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">অপারেটিং এন্টাইটি / উৎস</label>
+                                <select id="tx-source" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200">
+                                    <option value="SRES">এস. আর. ইলেকট্রনিক্স পার্ক (BML: 3000002272)</option>
+                                    <option value="MHPL">মিনিস্টার হাইটেক পার্ক (Minister: DEAL002905)</option>
+                                    <option value="SAEL">সালসাবিলাহ আমিন এম্পায়ারস লিমিটেড</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">লেনদেনের ধরণ</label>
+                                <select id="tx-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200">
+                                    <option value="RTGS">সোনালী ব্যাংক / DBBL RTGS</option>
+                                    <option value="FDD">ফরেন ডিমান্ড ড্রাফট (FDD)</option>
+                                    <option value="DEALER">ডিলারশিপ ইনভয়েস ক্লিয়ারেন্স</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">টাকার পরিমাণ (BDT)</label>
+                                <input type="number" id="tx-amount" placeholder="যেমন: 1500000" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">বেনিফিশিয়ারি / প্রাপক</label>
+                                <input type="text" id="tx-beneficiary" placeholder="প্রাপকের নাম বা অ্যাকাউন্ট" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 px-6 rounded-xl text-sm transition cursor-pointer">
+                            ট্রান্সফার ও SAP ERP তে লগ করুন
+                        </button>
+                    </form>
+
+                    <div id="tx-alert" class="hidden p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono space-y-1">
+                        <div class="font-bold">✅ ট্রানজাকশন সফলভাবে সম্পন্ন ও SAP লেজারে সিঙ্ক হয়েছে!</div>
+                        <div id="tx-details" class="text-slate-300"></div>
+                    </div>
+                </div>
+
+                <!-- Right Col: Gemini AI Audit -->
+                <div class="space-y-6">
+                    <div class="rounded-2xl bg-slate-900/80 border border-cyan-500/30 p-5 shadow-xl space-y-4">
+                        <h3 class="font-bold text-cyan-400 text-sm">জেমিনি এআই অডিট ও ট্যাক্স অ্যাসিস্ট্যান্ট</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="ai-prompt-input" placeholder="ট্যাক্স বা সেটেলমেন্ট নিয়ে প্রশ্ন করুন..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100">
+                            <button onclick="handleGeminiQuery()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 rounded-xl text-xs cursor-pointer">
+                                এআই কনসাল্টেশন নিন
+                            </button>
+                            <div id="ai-response-box" class="hidden bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-300">
+                                <div id="ai-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function processTransaction(e) {
+            e.preventDefault();
+            const source = document.getElementById('tx-source').value;
+            const type = document.getElementById('tx-type').value;
+            const amount = document.getElementById('tx-amount').value;
+            const beneficiary = document.getElementById('tx-beneficiary').value;
+
+            const alertBox = document.getElementById('tx-alert');
+            const detailsBox = document.getElementById('tx-details');
+
+            alertBox.classList.remove('hidden');
+            detailsBox.innerHTML = `Source: ${source} | Type: ${type} | Amount: BDT ${Number(amount).toLocaleString()} | To: ${beneficiary}`;
+            document.getElementById('transaction-form').reset();
+        }
+
+        function handleGeminiQuery() {
+            const query = document.getElementById('ai-prompt-input').value.trim();
+            if (!query) return;
+            const box = document.getElementById('ai-response-box');
+            const textEl = document.getElementById('ai-text');
+            box.classList.remove('hidden');
+            textEl.innerHTML = `<strong class="text-cyan-400">এআই উত্তর:</strong> আপনার প্রশ্ন "${query}" এর প্রেক্ষিতে SAP লেজার ও ডিলার কোড সম্পূর্ণ কমপ্লায়েন্ট।`;
+        }
+    </script>
+</body>
+</html>
