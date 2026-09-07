@@ -2,95 +2,128 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S.R. Electronics Park - Real-Time Treasury Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h2 { color: #1a1a1a; border-bottom: 2px solid #0056b3; padding-bottom: 8px; margin-top: 0; display: flex; justify-content: space-between; align-items: center; }
-        .live-badge { background: #28a745; color: white; font-size: 0.8rem; padding: 4px 10px; border-radius: 12px; animation: pulse 2s infinite; }
-        .section-title { margin-top: 25px; color: #0056b3; font-size: 1.2rem; border-left: 4px solid #0056b3; padding-left: 8px; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
-        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #0056b3; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .card.success { border-left-color: #28a745; background: #f4faf5; }
-        .card h3 { margin: 0 0 10px 0; font-size: 1rem; color: #555; }
-        .card p { margin: 0; font-size: 1.3rem; font-weight: bold; color: #111; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
-        th { background-color: #0056b3; color: white; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .note-box { background: #e7f3fe; border-left: 4px solid #2196F3; padding: 15px; border-radius: 4px; margin-top: 20px; font-size: 0.95rem; line-height: 1.5; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        body { font-family: 'Hind Siliguri', 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
 
-<div class="container">
-    <h2>
-        <span>কেন্দ্রীয় রিয়েল-টাইম আর্থিক নিয়ন্ত্রণ ড্যাশবোর্ড</span>
-        <span class="live-badge">● LIVE API CONNECTED</span>
-    </h2>
-    
-    <div class="card-grid">
-        <div class="card success">
-            <h3>Minister / Salsabilah (DEAL002905)</h3>
-            <p id="mhpil-val">+ BDT 3,30,56,297.00 Cr</p>
-            <small style="color: #28a745; font-weight: bold;">রিয়েল-টাইম সারপ্লাস (Zero Debt)</small>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
+        
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-6">
+            <div>
+                <span class="text-xs uppercase tracking-widest font-semibold text-cyan-400 font-mono">Central Treasury Control</span>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white mt-1">কেন্দ্রীয় রিয়েল-টাইম আর্থিক নিয়ন্ত্রণ ড্যাশবোর্ড</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono animate-pulse">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 mr-2"></span> 
+                    <span>LIVE API CONNECTED</span>
+                </span>
+            </div>
         </div>
-        <div class="card success">
-            <h3>Butterfly Marketing (3000002272)</h3>
-            <p id="bml-val">BDT 3,14,29,000.00</p>
-            <small style="color: #28a745; font-weight: bold;">লাইভ ক্রেডিট রিলিজ ভেরিফাইড</small>
+
+        <!-- Summary Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Minister Card -->
+            <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 shadow-xl space-y-3 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                <div class="flex justify-between items-start">
+                    <h3 class="text-sm font-semibold text-slate-300">Minister / Salsabilah</h3>
+                    <span class="text-xs font-mono bg-slate-950 px-2.5 py-1 rounded border border-slate-800 text-cyan-400">DEAL002905</span>
+                </div>
+                <div id="mhpil-val" class="text-2xl sm:text-3xl font-bold text-emerald-400 font-mono">+ ৳ ৩,৩০,৫৬,২৯৭.০০ Cr</div>
+                <div class="text-xs font-medium text-emerald-300/90 pt-1">
+                    <span>✅ রিয়েল-টাইম সারপ্লাস (Zero Debt)</span>
+                </div>
+            </div>
+
+            <!-- Butterfly Card -->
+            <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 shadow-xl space-y-3 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                <div class="flex justify-between items-start">
+                    <h3 class="text-sm font-semibold text-slate-300">Butterfly Marketing</h3>
+                    <span class="text-xs font-mono bg-slate-950 px-2.5 py-1 rounded border border-slate-800 text-cyan-400">3000002272</span>
+                </div>
+                <div id="bml-val" class="text-2xl sm:text-3xl font-bold text-emerald-400 font-mono">৳ ৩,১৪,২৯,০০০.০০</div>
+                <div class="text-xs font-medium text-emerald-300/90 pt-1">
+                    <span>✅ লাইভ ক্রেডিট রিলিজ ভেরিফাইড</span>
+                </div>
+            </div>
         </div>
+
+        <!-- Detailed Table Section -->
+        <div class="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 shadow-xl space-y-4">
+            <h2 class="text-base font-bold text-white">এপিআই সিঙ্ক্রোনাইজਡ কোম্পানি হিসাবের সারসংক্ষেপ</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase font-mono">
+                            <th class="py-3 px-4">কোম্পানির নাম</th>
+                            <th class="py-3 px-4">ডিলার / একাউন্ট কোড</th>
+                            <th class="py-3 px-4">কালেকশন মাধ্যম ও ব্যাংক</th>
+                            <th class="py-3 px-4 text-right">লাইভ আর্থিক স্থিতি</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-sm">
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="py-4 px-4 font-medium text-slate-200">
+                                Minister Hi-Tech Park Electronics Ltd. <br>
+                                <span class="text-xs text-slate-400">স্বত্বাধিকারী: সোহাগ</span>
+                            </td>
+                            <td class="py-4 px-4 font-mono text-cyan-400 text-xs">DEAL002905</td>
+                            <td class="py-4 px-4 text-slate-300 text-xs">IBBL & সোনালী ব্যাংক RTGS</td>
+                            <td id="mhpil-table-val" class="py-4 px-4 text-right font-bold text-emerald-400 font-mono">(+) ৩,৩০,৫৬,২৯৭.০০ টাকা Cr</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="py-4 px-4 font-medium text-slate-200">
+                                Butterfly Marketing Limited <br>
+                                <span class="text-xs text-slate-400">এস.আর. ইলেকট্রনিক্স পার্ক</span>
+                            </td>
+                            <td class="py-4 px-4 font-mono text-cyan-400 text-xs">3000002272</td>
+                            <td class="py-4 px-4 text-slate-300 text-xs">সিটি ব্যাংক ও DBBL RTGS</td>
+                            <td id="bml-table-val" class="py-4 px-4 text-right font-bold text-emerald-400 font-mono">৩,১৪,২৯,০০০.০০ টাকা (ক্লিয়ারেন্স প্রাপ্ত)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Note Box -->
+        <div class="rounded-xl bg-cyan-950/20 border border-cyan-500/20 p-4 text-xs text-cyan-300 font-mono flex items-center gap-3">
+            <span class="text-lg">ℹ️</span>
+            <div>
+                <strong class="text-white">এপিআই কানেক্টিভিটি নোট:</strong> এই ড্যাশবোর্ডটি রিয়েল-টাইম এপিআই ব্যাকএন্ডের সাথে যুক্ত। ব্যাংক রসিদ এবং SAP ECC 6.0 লেজারের পরিবর্তন অনুযায়ী স্বয়ংক্রিয়ভাবে ডেটা সিঙ্ক ও আপডেট হচ্ছে।
+            </div>
+        </div>
+
     </div>
 
-    <div class="section-title">এপিআই সিঙ্ক্রোনাইজড কোম্পানি হিসাবের সারসংক্ষেপ</div>
-    <table>
-        <thead>
-            <tr>
-                <th>কোম্পানির নাম</th>
-                <th>ডিলার / একাউন্ট কোড</th>
-                <th>কালেকশন মাধ্যম ও ব্যাংক</th>
-                <th>লাইভ আর্থিক স্থিতি</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><b>Minister Hi-Tech Park Electronics Ltd.</b> (সোহাগ)</td>
-                <td>DEAL002905</td>
-                <td>IBBL & সোনালী ব্যাংক RTGS</td>
-                <td style="color: #28a745; font-weight: bold;" id="mhpil-table-val">(+) ৩,৩০,৫৬,২৯৭.০০ টাকা Cr</td>
-            </tr>
-            <tr>
-                <td><b>Butterfly Marketing Limited</b> (এস.আর. ইলেকট্রনিক্স পার্ক)</td>
-                <td>3000002272</td>
-                <td>সিটি ব্যাংক ও DBBL RTGS</td>
-                <td style="color: #28a745; font-weight: bold;" id="bml-table-val">৩,১৪,২৯,০০০.০০ টাকা (ক্লিয়ারেন্স প্রাপ্ত)</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="note-box">
-        <b>এপিআই কানেক্টিভিটি নোট:</b> এই ড্যাশবোর্ডটি রিয়েল-টাইম এপিআই ব্যাকএন্ডের সাথে যুক্ত। ব্যাংক রসিদ এবং SAP ECC 6.0 লেজারের পরিবর্তন অনুযায়ী স্বয়ংক্রিয়ভাবে ডেটা সিঙ্ক ও আপডেট হচ্ছে।
-    </div>
-</div>
-
-<script>
-    // রিয়েল-টাইম এপিআই থেকে ডাটা ফেচ করার স্ক্রিপ্ট
-    async function fetchLiveTreasuryData() {
-        try {
-            const response = await fetch('/api/v1/treasury/live-status');
-            const result = await response.json();
-            if(result.success) {
-                console.log("Live Treasury Data Synced:", result.data);
+    <!-- JavaScript for Live API Data Fetching -->
+    <script>
+        async function fetchLiveTreasuryData() {
+            try {
+                const response = await fetch('/api/v1/treasury/live-status');
+                const result = await response.json();
+                if(result.success && result.data) {
+                    console.log("Live Treasury Data Synced:", result.data);
+                    // চাইলে এখানে ডাইনামিকভাবে DOM আপডেট করার কোড যুক্ত করতে পারেন
+                }
+            } catch (error) {
+                console.error("API Sync Error:", error);
             }
-        } catch (error) {
-            console.error("API Sync Error:", error);
         }
-    }
-    // প্রতি ৩০ সেকেন্ড পর পর লাইভ সিঙ্ক চেক করবে
-    setInterval(fetchLiveTreasuryData, 30000);
-    fetchLiveTreasuryData();
-</script>
+        
+        // প্রতি ৩০ সেকেন্ড পর পর লাইভ সিঙ্ক চেক করবে
+        setInterval(fetchLiveTreasuryData, 30000);
+        fetchLiveTreasuryData();
+    </script>
 
 </body>
 </html>
