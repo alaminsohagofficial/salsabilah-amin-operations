@@ -1,20 +1,29 @@
 {
-  "entity": "SALSABILAH AMIN LIMITED",
-  "proprietor": "MD. AL AMIN SOHAG",
+  "batch_id": "SAE-BATCH-2026-09-08",
+  "timestamp": "2026-09-08T01:00:00Z",
   "currency": "BDT",
-  "mhpil_settlement": {
-    "dealer_code": "002905",
-    "sap_doc_cleared": "5100029481",
-    "total_inflows": 39195000.00,
-    "total_debits": 8795000.00,
-    "net_surplus": 33056297.00,
-    "dispute_status": "CLEARED"
-  },
-  "bml_settlement": {
-    "account_code": "3000002272",
-    "memo_ref": "BML/TRS/2026/08/3000002272",
-    "allocated_funds": 31429000.00,
-    "active_balance": -209.00,
-    "credit_status": "RELEASED"
-  }
+  "transactions": [
+    {
+      "tx_id": "TXN-RTGS-98451201",
+      "source_entity": "MHPL",
+      "dealer_code": "DEAL002905",
+      "transaction_type": "RTGS",
+      "amount": 1500000.00,
+      "beneficiary_account": "20503910100020103",
+      "bank_name": "Islami Bank Bangladesh PLC",
+      "sap_reference": "5100029481",
+      "status": "CLEARED"
+    },
+    {
+      "tx_id": "TXN-FDD-98451202",
+      "source_entity": "SRES",
+      "dealer_code": "3000002272",
+      "transaction_type": "FDD",
+      "amount": 2500000.00,
+      "beneficiary_account": "BML-COLLECTION-ACC",
+      "bank_name": "Dutch-Bangla Bank PLC",
+      "sap_reference": "BML/TRS/2026/08/3000002272",
+      "status": "RELEASED"
+    }
+  ]
 }
