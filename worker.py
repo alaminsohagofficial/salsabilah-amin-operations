@@ -8,7 +8,9 @@ BANK_API_ENDPOINT = os.getenv("BANK_API_ENDPOINT")  # যেমন: DBBL / RTGS 
 BANK_API_TOKEN = os.getenv("BANK_API_TOKEN")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+
+# আধুনিক এবং দ্রুতগতির মডেল ব্যবহার করা হয়েছে
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def fetch_banking_transactions():
     """ব্যাংকিং কোর/এপিআই থেকে লাইভ লেনদেন সংগ্রহ"""
