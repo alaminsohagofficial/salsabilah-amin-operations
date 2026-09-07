@@ -2,9 +2,9 @@ import os
 import requests
 import google.generativeai as genai
 
-# ১. API ক্রেডেনশিয়াল কনফিগারেশন
+# ১. API ক্রেডেনশিয়াল কনফিগারেশন
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-BANK_API_ENDPOINT = os.getenv("BANK_API_ENDPOINT") # যেমন: DBBL / RTGS গেটওয়ে
+BANK_API_ENDPOINT = os.getenv("BANK_API_ENDPOINT")  # যেমন: DBBL / RTGS গেটওয়ে
 BANK_API_TOKEN = os.getenv("BANK_API_TOKEN")
 
 genai.configure(api_key=GEMINI_API_KEY)
@@ -22,7 +22,7 @@ def fetch_banking_transactions():
     return None
 
 def analyze_with_gemini(transaction_data):
-    """Gemini API দিয়ে ট্রানজেকশন অডিট ও লেজার ক্লাসিফিকেশন"""
+    """Gemini API দিয়ে ট্রানজেকশন অডিট ও লেজার ক্লাসিফিকেশন"""
     prompt = f"""
     Analyze the following banking transaction data and classify it for ERP Ledger:
     {transaction_data}
