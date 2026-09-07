@@ -1,60 +1,59 @@
+// server.js - Salsabilah Amin Empires Enterprise Backend
 const express = require('express');
-const app = express();
-app.use(express.json());
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
-// রিয়েল-টাইম সেন্ট্রাল ট্রেজারি ডাটাবেস স্টেট
-let realTimeTreasury = {
-    business_name: "S.R. Electronics Park",
-    proprietor: "MD. AL AMIN SOHAG",
-    last_sync: new Date().toISOString(),
-    mhpil: {
-        principal: "Minister Hi-Tech Park Electronics Ltd.",
-        dealer_code: "002905",
-        bank_ref: "IBBL A/C 20503910100020103 & Sonali Bank RTGS",
-        net_surplus: 33056297.00,
-        status: "LIVE_SYNCED"
-    },
-    butterfly: {
-        principal: "Butterfly Marketing Limited",
-        account_code: "3000002272",
-        bank_ref: "City Bank & DBBL RTGS",
-        allocated_funds: 31429000.00,
-        status: "LIVE_SYNCED"
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(bodyParser.json());
+
+// In-memory Treasury Live Status & Ledger Mock
+const treasuryData = {
+    success: true,
+    data: {
+        minister_dealer: "DEAL002905",
+        minister_balance: "+ BDT 3,30,56,297.00 Cr",
+        butterfly_dealer: "3000002272",
+        butterfly_balance: "BDT 3,14,29,000.00",
+        last_sync: new Date().toISOString()
     }
 };
 
-// ১. রিয়েল-টাইম ট্রেজারি স্ট্যাটাস এপিআই
+// API Endpoint: Live Treasury Status
 app.get('/api/v1/treasury/live-status', (req, res) => {
-    realTimeTreasury.last_sync = new Date().toISOString();
+    res.json(treasuryData);
+});
+
+// API Endpoint: Disputes Records
+app.get('/reconciliation/disputes', (req, res) => {
     res.json({
         success: true,
-        timestamp: realTimeTreasury.last_sync,
-        data: realTimeTreasury
+        records: [
+            { dispute_id: "DSP-2026-01", dbbl_trace_id: "TRC-101", dealer_id: "DEAL002905", amount_bdt: 250000, status: "PENDING_SAP_SYNC" },
+            { dispute_id: "DSP-2026-02", dbbl_trace_id: "TRC-102", dealer_id: "3000002272", amount_bdt: 180000, status: "UNDER_AI_AUDIT" }
+        ]
     });
 });
 
-// ২. এক্সটার্নাল ব্যাংক বা SAP এপিআই থেকে লাইভ ডাটা পুশ/সিঙ্ক করার এন্ডপয়েন্ট
-app.post('/api/v1/sync/ledger', (req, res) => {
-    const { company, surplus_amount, allocated_funds } = req.body;
-
-    if (company === 'MHPIL' && surplus_amount !== undefined) {
-        realTimeTreasury.mhpil.net_surplus = surplus_amount;
-        realTimeTreasury.mhpil.status = "UPDATED_VIA_API";
-    } else if (company === 'BML' && allocated_funds !== undefined) {
-        realTimeTreasury.butterfly.allocated_funds = allocated_funds;
-        realTimeTreasury.butterfly.status = "UPDATED_VIA_API";
-    } else {
-        return res.status(400).json({ success: false, message: "Invalid sync payload format." });
-    }
-
+// API Endpoint: Gemini AI Dispute Audit Analysis
+app.post('/reconciliation/disputes/analyze', (req, res) => {
+    const { dealer_id, central_ledger, partner_invoices } = req.body;
+    
+    // Logic simulation for audit
     res.json({
         success: true,
-        message: `Real-time synchronization successful for ${company}`,
-        current_data: realTimeTreasury
+        audit_notice_ref: `SR-AUDIT-2026-${Math.floor(Math.random() * 90000 + 10000)}`,
+        dealer_id: dealer_id || "DEAL002905",
+        analysis: {
+            is_balanced: false,
+            total_discrepancy_bdt: 20000,
+            audit_summary: "Minor ledger variance identified in invoice trace ID TRC-102. Fully compliant with Bangladesh Bank RTGS guidelines after automated adjustment."
+        }
     });
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`S.R. Electronics Park Real-Time API Engine running on port ${PORT}`);
+    console.log(`Salsabilah Enterprise Server running on port ${PORT}`);
 });
