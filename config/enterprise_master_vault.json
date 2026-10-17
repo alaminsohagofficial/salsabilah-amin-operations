@@ -9,27 +9,50 @@
           "status": "Active / Fully Compliant"
         },
         {
-          "legal_name": "Salsabilah Ltd",
-          "jurisdiction": "United Kingdom",
-          "company_number": "09814720",
-          "registered_office": "Cardiff, United Kingdom",
-          "status": "Active / Cross-Border Integration"
+          "legal_name": "Salsabilah Amin LLC",
+          "jurisdiction": "Delaware, United States",
+          "file_record_id": "REC-US-2026-948210-SA",
+          "delaware_file_number": "7654321",
+          "formation_date": "September 13, 2026",
+          "registered_office": "1201 North Market Street, Suite 1500, Wilmington, New Castle County, Delaware 19801, USA",
+          "principal_and_ceo": "MD AL AMIN SOHAG",
+          "operational_scope": "International Digital Assets Holding, Cross-Border E-commerce & Cloud Operations",
+          "status": "Active / Formally Authenticated"
         },
         {
-          "legal_name": "SR Electronics Park",
-          "jurisdiction": "Bangladesh (Regional Hub)",
-          "partner_id": "PUB-2026-SR-01",
-          "status": "Operational"
+          "legal_name": "Salsabilah Amin Empires Ltd.",
+          "jurisdiction": "United Kingdom & European Union",
+          "ip_holding_entity": "Salsabilah Ecosystem / MD AL AMIN SOHAG",
+          "uk_trademark_ref": "UK00003645093 (Class 35 & Class 41)",
+          "status": "Active / Registered IP Holding Entity"
+        },
+        {
+          "legal_name": "Salsabilah Electronics Park",
+          "jurisdiction": "Bhangbaria, Alamdanga, Chuadanga, Bangladesh",
+          "e_trade_license": "TRAD/BHANG/2026/05306",
+          "app_id": "APP-2026-09214",
+          "validity": "30 June 2027",
+          "proprietorship_and_affiliation": "Mst. Nahian Sultana / Salsabilah Amin Limited",
+          "business_nature": "Retail & Wholesale Electronics and Home Appliances",
+          "status": "Operational / Verified Retail Hub"
         }
       ]
     },
     "intellectual_property_and_brand_assets": {
       "euipo_trademark": {
-        "title": "THE DIGIT THEORY",
+        "title": "The Digit Theory™",
         "registration_number": "018923558",
-        "filing_reference": "2623558",
-        "registering_authority": "EUIPO (Alicante, Spain) / WIPO Madrid Protocol",
-        "classification": "Class 9, Class 35, Class 42"
+        "work_programme_ref": "EUAN Work Programme 2026-2027",
+        "registering_authority": "European Union Intellectual Property Office (EUIPO)",
+        "lead_researcher_inventor": "MD AL AMIN SOHAG",
+        "jurisdiction": "27 EU Member States"
+      },
+      "uk_ipo_trademark": {
+        "title": "Salsabilah Amin Empires & Digital Systems Architecture",
+        "registration_number": "UK00003645093",
+        "registering_authority": "UK Intellectual Property Office (UK IPO)",
+        "classes": ["Class 35 (Advertising & Business Administration)", "Class 41 (Education & Training Services)"],
+        "rights_holder": "MD AL AMIN SOHAG / Salsabilah Ecosystem"
       },
       "corporate_literary_works": {
         "publication_title": "The Empress's Legacy: A Symphony of Faith and Grit",
@@ -37,6 +60,15 @@
       }
     },
     "treasury_and_tax_compliance": {
+      "tax_acknowledgement_receipt": {
+        "taxpayer_name": "MD. AL AMIN SOHAG",
+        "tin": "6985-7875-9714",
+        "taxes_circle": "Circle-15 (Alamdanga)",
+        "taxes_zone": "Kushtia",
+        "assessment_year": "2024-2025",
+        "return_serial": "7148071447",
+        "submission_date": "11/05/2026"
+      },
       "verified_annual_revenue": "20,000,000 BDT (Google Partner Network & IP Royalties)",
       "customs_and_import_compliance": {
         "duty_challan_reference": "Sonali Bank PLC Treasury Challan - 18,500,000 BDT",
