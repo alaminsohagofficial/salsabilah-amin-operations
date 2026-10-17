@@ -1,0 +1,60 @@
+{
+  "sovereign_enterprise_framework": {
+    "organization_details": {
+      "corporate_entities": [
+        {
+          "legal_name": "Salsabilah Amin Limited",
+          "jurisdiction": "Bangladesh",
+          "registration_ref": "RJSC Ref: C-198542/2026",
+          "status": "Active / Fully Compliant"
+        },
+        {
+          "legal_name": "Salsabilah Ltd",
+          "jurisdiction": "United Kingdom",
+          "company_number": "09814720",
+          "registered_office": "Cardiff, United Kingdom",
+          "status": "Active / Cross-Border Integration"
+        },
+        {
+          "legal_name": "SR Electronics Park",
+          "jurisdiction": "Bangladesh (Regional Hub)",
+          "partner_id": "PUB-2026-SR-01",
+          "status": "Operational"
+        }
+      ]
+    },
+    "intellectual_property_and_brand_assets": {
+      "euipo_trademark": {
+        "title": "THE DIGIT THEORY",
+        "registration_number": "018923558",
+        "filing_reference": "2623558",
+        "registering_authority": "EUIPO (Alicante, Spain) / WIPO Madrid Protocol",
+        "classification": "Class 9, Class 35, Class 42"
+      },
+      "corporate_literary_works": {
+        "publication_title": "The Empress's Legacy: A Symphony of Faith and Grit",
+        "specification": "Hardcover 240pp, Goodreads Verified Master Work"
+      }
+    },
+    "treasury_and_tax_compliance": {
+      "verified_annual_revenue": "20,000,000 BDT (Google Partner Network & IP Royalties)",
+      "customs_and_import_compliance": {
+        "duty_challan_reference": "Sonali Bank PLC Treasury Challan - 18,500,000 BDT",
+        "bill_of_entry": "C189425",
+        "import_asset_class": "Toyota Land Cruiser LC300 ZX Corporate Fleet Asset"
+      }
+    },
+    "corporate_security_and_administrative_logs": {
+      "police_compliance": {
+        "filing_station": "Alamdanga Police Station, Chuadanga",
+        "event_date": "11 October 2026",
+        "record_type": "General Diary (GD) for Corporate Mobile Authentication Lines",
+        "line_count": 4
+      },
+      "human_resource_migration_division": {
+        "service_sector": "Schengen Area (France) Tier-2 Skilled Placement Framework",
+        "operational_unit": "Salsabilah Global Talent Migration & Workforce Logistics"
+      }
+    }
+  }
+}
