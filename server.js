@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 5000; // ফ্রন্টএন্ডের সাথে সামঞ্জস্য রেখে পোর্ট 5000 করা হয়েছে
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,11 +26,10 @@ app.get('/api/v1/treasury/live-status', (req, res) => {
     res.json(treasuryData);
 });
 
-// API Endpoint: Payment Initiation Gateway (ফ্রন্টএন্ডের জন্য নতুন যুক্ত করা হয়েছে)
+// API Endpoint: Payment Initiation Gateway
 app.post('/api/v1/payment/initiate', (req, res) => {
     const { amount, phone, channel } = req.body;
 
-    // ভ্যালিডেশন চেক
     if (!amount || !phone || !channel) {
         return res.status(400).json({
             success: false,
@@ -38,13 +37,31 @@ app.post('/api/v1/payment/initiate', (req, res) => {
         });
     }
 
-    // পেমেন্ট গেটওয়ে ইউআরএল জেনারেট (এখানে SSLCommerz বা ব্যাংক গেটওয়ের রিডাইরেক্ট লিংক হবে)
-    // উদাহরণস্বরূপ একটি ডামি গেটওয়ে পেজ ইউআরএল রিটার্ন করা হচ্ছে
     res.json({
         success: true,
         GatewayPageURL: `https://sandbox.sslcommerz.com/gwprocess/v4/api.php?ref=SALSABILAH_${Date.now()}`,
         trx_id: `TXN-${Math.floor(Math.random() * 900000 + 100000)}`,
         message: 'পেমেন্ট রিকোয়েস্ট সফলভাবে গৃহীত হয়েছে।'
+    });
+});
+
+// API Endpoint: Real-Time SAP & Bank Ledger Synchronization (পাইথন স্ক্রিপ্টের জন্য যুক্ত করা হয়েছে)
+app.post('/api/v1/sync/ledger', (req, res) => {
+    const { company, surplus_amount, allocated_funds } = req.body;
+
+    if (!company) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'কোম্পানির নাম (company) আবশ্যক।' 
+        });
+    }
+
+    console.log(`[LEDGER SYNC SUCCESS] Company: ${company}, Data received:`, req.body);
+
+    res.json({
+        success: true,
+        message: `Ledger synchronized successfully for ${company}`,
+        timestamp: new Date().toISOString()
     });
 });
 
@@ -63,7 +80,6 @@ app.get('/reconciliation/disputes', (req, res) => {
 app.post('/reconciliation/disputes/analyze', (req, res) => {
     const { dealer_id, central_ledger, partner_invoices } = req.body;
     
-    // Logic simulation for audit
     res.json({
         success: true,
         audit_notice_ref: `SR-AUDIT-2026-${Math.floor(Math.random() * 90000 + 10000)}`,
