@@ -1,42 +1,43 @@
 import os
-import sys
 import requests
+from datetime import datetime
 
-def send_sms(phone_number: str, message: str, principal: str = "SR_PARK") -> bool:
-    api_url = os.getenv("SMS_GATEWAY_URL")
-    api_key = os.getenv("SMS_GATEWAY_API_KEY")
+def trigger_enterprise_sms(phone_number: str, message_body: str):
+    api_key = os.environ.get("SMS_GATEWAY_API_KEY")
+    sender_id = os.environ.get("SMS_SENDER_ID", "SALSABILAH")
     
-    if principal == "MINISTER":
-        sender_id = os.getenv("MINISTER_SENDER_ID", "MINISTER")
-    elif principal == "BUTTERFLY":
-        sender_id = os.getenv("BML_SENDER_ID", "BUTTERFLY")
-    else:
-        sender_id = os.getenv("SMS_SENDER_ID", "SR_PARK")
-
-    if not api_url or not api_key:
-        print("Error: SMS credentials not found in environment variables.", file=sys.stderr)
+    if not api_key:
+        print("Error: SMS_GATEWAY_API_KEY environment variable is missing.")
         return False
 
+    # Example standard bulk/transactional SMS API payload (e.g., Bangladesh local gateway standard)
     payload = {
         "api_key": api_key,
-        "sender_id": sender_id,
-        "to": phone_number,
-        "message": message
+        "senderid": sender_id,
+        "number": phone_number,
+        "message": message_body
     }
 
+    print(f"[{datetime.now()}] Dispatching Enterprise SMS to {phone_number}...")
+    
     try:
-        response = requests.post(api_url, json=payload, timeout=10)
-        response.raise_for_status()
-        print(f"SMS successfully sent to {phone_number} via {sender_id}")
-        return True
-    except requests.exceptions.RequestException as err:
-        print(f"Failed to send SMS: {err}", file=sys.stderr)
+        # Replace with your active SMS Gateway endpoint provider URL
+        response = requests.post("https://bulksmsbd.net/api/smsapi", data=payload)
+        res_data = response.json()
+        
+        if response.status_code == 200:
+            print(f"SMS Triggered Successfully. Gateway Response: {res_data}")
+            return True
+        else:
+            print(f"SMS Gateway Error Code: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"Failed to connect to SMS Gateway: {e}")
         return False
 
 if __name__ == "__main__":
-    print("S.R. Electronics Park - SMS Gateway Trigger Initialized.")
-    if len(sys.argv) >= 3:
-        target_phone = sys.argv[1]
-        msg_content = sys.argv[2]
-        brand_principal = sys.argv[3] if len(sys.argv) > 3 else "SR_PARK"
-        send_sms(target_phone, msg_content, brand_principal)
+    # Test execution for Salsabilah Amin Empires / SR Electronics
+    sample_phone = "01700000000"
+    sample_msg = "Dear Partner, your SAP FI-BL ledger reconciliation and RTGS payment settlement has been processed successfully."
+    # trigger_enterprise_sms(sample_phone, sample_msg)
+    print("SMS Gateway Trigger Module Loaded Successfully.")
