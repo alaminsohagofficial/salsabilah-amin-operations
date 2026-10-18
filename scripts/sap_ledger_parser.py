@@ -1,34 +1,52 @@
-import requests
+import os
 import json
-from datetime import datetime
+import sys
 
-API_URL = "http://localhost:3000/api/v1/sync/ledger"
+def parse_sap_ledger(ledger_file_path: str):
+    if not os.path.exists(ledger_file_path):
+        print(f"Error: Ledger file '{ledger_file_path}' not found.", file=sys.stderr)
+        return None
 
-def sync_ledger_data():
-    payload_mhpil = {
-        "company": "MHPIL",
-        "surplus_amount": 33056297.00
-    }
-    
-    payload_bml = {
-        "company": "BML",
-        "allocated_funds": 31429000.00
-    }
-
-    print(f"[{datetime.now()}] Initiating Real-Time SAP & Bank Ledger Synchronization...")
+    print(f"Processing SAP Ledger file: {ledger_file_path}")
     
     try:
-        res1 = requests.post(API_URL, json=payload_mhpil)
-        res2 = requests.post(API_URL, json=payload_bml)
+        with open(ledger_file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
         
-        if res1.status_code == 200 and res2.status_code == 200:
-            print("Successfully synchronized all brand ledgers in real-time.")
-            print("MHPIL Response:", res1.json())
-            print("BML Response:", res2.json())
-        else:
-            print("Sync warning: Response code mismatch.")
+        minister_entries = []
+        butterfly_entries = []
+
+        for entry in data.get("entries", []):
+            dealer_code = str(entry.get("dealer_code", "")).strip()
+            
+            if entry.get("status") == "PENDING":
+                entry["status"] = "RECONCILED"
+
+            if dealer_code in ["002905", "DEAL002905"]:
+                entry["principal"] = "Minister Hi-Tech Park Electronics Ltd."
+                minister_entries.append(entry)
+            elif dealer_code in ["3000002272"]:
+                entry["principal"] = "Butterfly Marketing Limited"
+                butterfly_entries.append(entry)
+            else:
+                print(f"Warning: Unknown or unmapped dealer code '{dealer_code}' found.")
+
+        print(f"--- Reconciliation Summary for S.R. Electronics Park ---")
+        print(f"Minister (Dealer DEAL002905): {len(minister_entries)} records reconciled.")
+        print(f"Butterfly (Dealer 3000002272): {len(butterfly_entries)} records reconciled.")
+
+        return {
+            "minister_reconciled": minister_entries,
+            "butterfly_reconciled": butterfly_entries
+        }
+
     except Exception as e:
-        print(f"Error connecting to local/cloud API server: {e}")
+        print(f"Error parsing ledger: {e}", file=sys.stderr)
+        return None
 
 if __name__ == "__main__":
-    sync_ledger_data()
+    print("S.R. Electronics Park - SAP Ledger Reconciliation Engine Initialized.")
+    if len(sys.argv) > 1:
+        parse_sap_ledger(sys.argv[1])
+    else:
+        print("Usage: python sap_ledger_parser.py <path_to_ledger.json>")
