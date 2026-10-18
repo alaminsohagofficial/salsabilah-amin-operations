@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000; // ফ্রন্টএন্ডের সাথে সামঞ্জস্য রেখে পোর্ট 5000 করা হয়েছে
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -24,6 +24,28 @@ const treasuryData = {
 // API Endpoint: Live Treasury Status
 app.get('/api/v1/treasury/live-status', (req, res) => {
     res.json(treasuryData);
+});
+
+// API Endpoint: Payment Initiation Gateway (ফ্রন্টএন্ডের জন্য নতুন যুক্ত করা হয়েছে)
+app.post('/api/v1/payment/initiate', (req, res) => {
+    const { amount, phone, channel } = req.body;
+
+    // ভ্যালিডেশন চেক
+    if (!amount || !phone || !channel) {
+        return res.status(400).json({
+            success: false,
+            message: 'সকল ফিল্ড সঠিকভাবে পূরণ করুন।'
+        });
+    }
+
+    // পেমেন্ট গেটওয়ে ইউআরএল জেনারেট (এখানে SSLCommerz বা ব্যাংক গেটওয়ের রিডাইরেক্ট লিংক হবে)
+    // উদাহরণস্বরূপ একটি ডামি গেটওয়ে পেজ ইউআরএল রিটার্ন করা হচ্ছে
+    res.json({
+        success: true,
+        GatewayPageURL: `https://sandbox.sslcommerz.com/gwprocess/v4/api.php?ref=SALSABILAH_${Date.now()}`,
+        trx_id: `TXN-${Math.floor(Math.random() * 900000 + 100000)}`,
+        message: 'পেমেন্ট রিকোয়েস্ট সফলভাবে গৃহীত হয়েছে।'
+    });
 });
 
 // API Endpoint: Disputes Records
