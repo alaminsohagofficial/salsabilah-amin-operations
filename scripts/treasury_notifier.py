@@ -12,7 +12,6 @@ def send_treasury_audit_email():
         print("Error: Required environment variables for email are missing.")
         return
 
-    # S.R. Electronics Park Treasury & Audit Confirmation Details
     subject = "【SR-BML-2026-RTGS-RECON-FINAL】 Treasury & SAP Ledger Posting Confirmation"
     
     body = """
@@ -42,7 +41,6 @@ def send_treasury_audit_email():
     message.attach(MIMEText(body, "plain"))
 
     try:
-        # Connecting to SMTP server (e.g., Gmail TLS)
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(sender_email, sender_password)
